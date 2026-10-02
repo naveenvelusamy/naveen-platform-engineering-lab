@@ -21,3 +21,6 @@ steps:
 
 - script: npm run build
   displayName: "Build Next.js application"
+
+- scrier: wqeqwe
+  displayName: "Test script"
