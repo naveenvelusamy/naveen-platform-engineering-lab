@@ -55,9 +55,13 @@ export default function ThemeToggle() {
       className="theme-toggle"
     >
       <span className="theme-toggle-icon" aria-hidden="true">
-        {isDark ? "☾" : "☼"}
+        <svg viewBox="0 0 44 24" fill="none">
+          <circle cx="11" cy="12" r="4" />
+          <path d="M11 2.5v2M11 19.5v2M1.5 12h2M18.5 12h2M4.28 5.28l1.42 1.42m10.6 10.6 1.42 1.42m0-13.44L16.3 6.7M5.7 17.3l-1.42 1.42" />
+          <path d="M34.5 4.25a8 8 0 1 0 5.25 14.03A8.2 8.2 0 0 1 34.5 4.25Z" />
+        </svg>
       </span>
-      <span>{isDark ? "Dark" : "Light"} theme</span>
+      <span className="sr-only">{isDark ? "Dark" : "Light"} theme</span>
     </button>
   );
 }

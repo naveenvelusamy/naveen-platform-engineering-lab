@@ -86,13 +86,13 @@ html {
 .theme-toggle {
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
+  justify-content: center;
+  width: 3.15rem;
+  min-height: 2.35rem;
   border: 1px solid var(--site-border);
-  border-radius: 3px;
-  padding: 0.35rem 0.55rem;
+  border-radius: 0.45rem;
+  padding: 0.35rem;
   color: var(--site-muted);
-  font-size: 0.75rem;
-  font-weight: 600;
   transition:
     border-color 180ms ease,
     background-color 180ms ease,
@@ -111,11 +111,19 @@ html {
 
 .theme-toggle-icon {
   display: grid;
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 2.65rem;
+  height: 1.4rem;
   place-items: center;
-  border: 1px solid currentColor;
-  line-height: 1;
+}
+
+.theme-toggle-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
 }
 
 .site-page {
@@ -1018,16 +1026,7 @@ html {
   stroke-width: 1.7;
 }
 
-.profile-icon-link[aria-label="GitHub profile"] svg {
-  fill: currentColor;
-  stroke-width: 1.1;
-}
-
-.profile-icon-link[aria-label="GitHub profile"] svg path {
-  stroke: var(--site-surface-raised);
-}
-
-.profile-icon-link[aria-label="LinkedIn profile"] svg circle {
+.profile-contact-linkedin > summary svg circle {
   fill: currentColor;
   stroke: none;
 }
@@ -1046,26 +1045,37 @@ html {
 
 .profile-contact > summary {
   display: inline-grid;
-  width: 2rem;
-  height: 2rem;
+  width: 2.25rem;
+  height: 2.25rem;
   place-items: center;
-  border-radius: 0.25rem;
+  border: 1px solid transparent;
+  border-radius: 0.6rem;
   color: var(--site-muted);
   cursor: pointer;
   list-style: none;
   transition:
     background-color 170ms ease,
-    color 170ms ease;
+    border-color 170ms ease,
+    color 170ms ease,
+    box-shadow 170ms ease,
+    transform 170ms ease;
 }
 
 .profile-contact > summary::-webkit-details-marker {
   display: none;
 }
 
-.profile-contact > summary:hover,
+.profile-contact:hover > summary,
 .profile-contact[open] > summary {
-  background: color-mix(in srgb, var(--site-accent) 10%, transparent);
+  border-color: color-mix(in srgb, var(--site-accent) 26%, var(--site-border));
+  background: color-mix(in srgb, var(--site-accent) 14%, var(--site-surface));
   color: var(--site-accent);
+}
+
+.profile-contact:hover > summary,
+.profile-contact[open] > summary {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px color-mix(in srgb, var(--site-accent) 18%, transparent);
 }
 
 .profile-contact > summary:focus-visible {
@@ -1083,12 +1093,21 @@ html {
   stroke-width: 1.7;
 }
 
+.profile-contact-github > summary svg {
+  fill: currentColor;
+  stroke-width: 1.1;
+}
+
+.profile-contact-github > summary svg path {
+  stroke: var(--site-surface-raised);
+}
+
 .profile-contact-popover {
   position: absolute;
   z-index: 20;
-  top: calc(100% + 0.55rem);
+  top: 100%;
   right: 0;
-  display: grid;
+  display: none;
   min-width: 12rem;
   gap: 0.3rem;
   border: 1px solid var(--site-border);
@@ -1098,6 +1117,14 @@ html {
   box-shadow: 0 10px 28px rgba(10, 25, 34, 0.16);
   color: var(--site-ink);
   font-size: 0.82rem;
+}
+
+.profile-contact[open] .profile-contact-popover,
+.profile-contact:hover .profile-contact-popover,
+.profile-contact:focus-within .profile-contact-popover {
+  display: grid;
+  transform-origin: top right;
+  animation: profile-contact-pop 180ms cubic-bezier(0.2, 0.72, 0.25, 1) both;
 }
 
 .profile-contact-popover > span {
@@ -1132,6 +1159,23 @@ html {
     right: auto;
     left: 50%;
     transform: translateX(-50%);
+  }
+
+  .profile-contact[open] .profile-contact-popover {
+    transform-origin: top center;
+    animation-name: profile-contact-pop-mobile;
+  }
+}
+
+@keyframes profile-contact-pop {
+  from {
+    opacity: 0;
+    transform: translateY(-0.35rem) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -1365,6 +1409,18 @@ html {
   }
 }
 
+@keyframes profile-contact-pop-mobile {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -0.35rem) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .engineering-visual animateMotion {
     display: none;
@@ -1379,6 +1435,7 @@ html {
 }
 
 .site-content > section.experience-section {
+  min-width: 0;
   padding-block: clamp(4rem, 8vw, 7rem);
   padding-inline: 0;
   border-bottom: 1px solid var(--site-border);
@@ -1386,7 +1443,7 @@ html {
 }
 
 .experience-heading {
-  max-width: 46rem;
+  max-width: 100%;
   margin-inline: auto;
   text-align: center;
 }
@@ -1423,17 +1480,24 @@ html {
 
 .experience-pathway {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
   justify-content: center;
   gap: 0.45rem;
   margin-top: 1.25rem;
   color: var(--site-muted);
-  font-size: 0.75rem;
+  font-size: clamp(0.68rem, 0.9vw, 0.9rem);
   font-weight: 550;
+  white-space: nowrap;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--site-accent) 45%, transparent) transparent;
 }
 
 .experience-pathway > span {
   display: inline-flex;
+  flex: 0 0 auto;
   align-items: center;
 }
 
@@ -1646,9 +1710,9 @@ html {
   }
 
   .experience-pathway {
-    max-width: 24rem;
     margin-inline: auto;
-    row-gap: 0.55rem;
+    justify-content: flex-start;
+    font-size: 0.75rem;
   }
 
   .experience-timeline {

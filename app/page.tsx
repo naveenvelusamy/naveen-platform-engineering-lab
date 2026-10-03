@@ -123,31 +123,57 @@ export default function Home() {
                 </svg>
                 <span>Resume</span>
               </a>
-              <a
-                className="profile-social profile-icon-link"
-                href="https://github.com/naveenvelusamy"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="GitHub profile"
+              <details
+                className="profile-contact profile-contact-github"
+                name="profile-contact"
               >
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M9 19.25c-4.2 1.25-4.2-2.1-5.9-2.5m11.8 5v-3.23a2.8 2.8 0 0 0-.78-2.17c2.6-.29 5.33-1.27 5.33-5.84a4.56 4.56 0 0 0-1.22-3.16 4.23 4.23 0 0 0-.12-3.12s-1-.3-3.26 1.21a11.2 11.2 0 0 0-5.93 0C6.66 3.93 5.65 4.23 5.65 4.23a4.23 4.23 0 0 0-.12 3.12 4.56 4.56 0 0 0-1.22 3.18c0 4.55 2.72 5.53 5.32 5.82a2.8 2.8 0 0 0-.77 2.15v3.25" />
-                </svg>
-                <span className="sr-only">GitHub</span>
-              </a>
-              <a
-                className="profile-social profile-icon-link"
-                href="https://www.linkedin.com/in/naveen-velusamy/"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="LinkedIn profile"
+                <summary
+                  className="profile-icon-link"
+                  aria-label="Show GitHub profile"
+                  title="GitHub"
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M9 19.25c-4.2 1.25-4.2-2.1-5.9-2.5m11.8 5v-3.23a2.8 2.8 0 0 0-.78-2.17c2.6-.29 5.33-1.27 5.33-5.84a4.56 4.56 0 0 0-1.22-3.16 4.23 4.23 0 0 0-.12-3.12s-1-.3-3.26 1.21a11.2 11.2 0 0 0-5.93 0C6.66 3.93 5.65 4.23 5.65 4.23a4.23 4.23 0 0 0-.12 3.12 4.56 4.56 0 0 0-1.22 3.18c0 4.55 2.72 5.53 5.32 5.82a2.8 2.8 0 0 0-.77 2.15v3.25" />
+                  </svg>
+                  <span className="sr-only">GitHub</span>
+                </summary>
+                <div className="profile-contact-popover">
+                  <span>GitHub</span>
+                  <a
+                    href="https://github.com/naveenvelusamy"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    View GitHub profile
+                  </a>
+                </div>
+              </details>
+              <details
+                className="profile-contact profile-contact-linkedin"
+                name="profile-contact"
               >
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M5.25 8.5v10.25M5.25 5.2v.05M9.5 18.75V8.5h3.3v1.4a3.62 3.62 0 0 1 3.15-1.7c2.72 0 3.8 1.72 3.8 4.55v6h-3.35v-5.33c0-1.42-.27-2.48-1.76-2.48-1.56 0-1.8 1.22-1.8 2.4v5.41z" />
-                  <circle cx="5.25" cy="5.25" r="1.25" />
-                </svg>
-                <span className="sr-only">LinkedIn</span>
-              </a>
+                <summary
+                  className="profile-icon-link"
+                  aria-label="Show LinkedIn profile"
+                  title="LinkedIn"
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5.25 8.5v10.25M5.25 5.2v.05M9.5 18.75V8.5h3.3v1.4a3.62 3.62 0 0 1 3.15-1.7c2.72 0 3.8 1.72 3.8 4.55v6h-3.35v-5.33c0-1.42-.27-2.48-1.76-2.48-1.56 0-1.8 1.22-1.8 2.4v5.41z" />
+                    <circle cx="5.25" cy="5.25" r="1.25" />
+                  </svg>
+                  <span className="sr-only">LinkedIn</span>
+                </summary>
+                <div className="profile-contact-popover">
+                  <span>LinkedIn</span>
+                  <a
+                    href="https://www.linkedin.com/in/naveen-velusamy/"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    View LinkedIn profile
+                  </a>
+                </div>
+              </details>
               <details className="profile-contact" name="profile-contact">
                 <summary aria-label="Show email address" title="Email">
                   <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -305,9 +331,9 @@ export default function Home() {
                 {[
                   "Linux",
                   "Enterprise Infrastructure",
-                  "AWS / Automation",
+                  "AWS & Automation",
                   "DevOps",
-                  "Azure / Kubernetes",
+                  "Azure Cloud Engineering & Automation",
                   "Platform Engineering",
                 ].map((step, index, steps) => (
                   <span key={step} className="flex items-center">
