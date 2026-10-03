@@ -1032,6 +1032,109 @@ html {
   stroke: none;
 }
 
+.profile-contact {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+}
+
+.profile-card {
+  position: relative;
+  z-index: 2;
+}
+
+.profile-contact > summary {
+  display: inline-grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border-radius: 0.25rem;
+  color: var(--site-muted);
+  cursor: pointer;
+  list-style: none;
+  transition:
+    background-color 170ms ease,
+    color 170ms ease;
+}
+
+.profile-contact > summary::-webkit-details-marker {
+  display: none;
+}
+
+.profile-contact > summary:hover,
+.profile-contact[open] > summary {
+  background: color-mix(in srgb, var(--site-accent) 10%, transparent);
+  color: var(--site-accent);
+}
+
+.profile-contact > summary:focus-visible {
+  outline: 2px solid var(--site-accent);
+  outline-offset: 2px;
+}
+
+.profile-contact > summary svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+.profile-contact-popover {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 0.55rem);
+  right: 0;
+  display: grid;
+  min-width: 12rem;
+  gap: 0.3rem;
+  border: 1px solid var(--site-border);
+  border-radius: 0.45rem;
+  padding: 0.75rem 0.9rem;
+  background: var(--site-surface-raised);
+  box-shadow: 0 10px 28px rgba(10, 25, 34, 0.16);
+  color: var(--site-ink);
+  font-size: 0.82rem;
+}
+
+.profile-contact-popover > span {
+  color: var(--site-muted);
+  font-size: 0.68rem;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.profile-contact-popover > a {
+  color: var(--site-ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.profile-contact-popover > a:hover {
+  color: var(--site-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.profile-contact-popover > a:focus-visible {
+  border-radius: 2px;
+  outline: 2px solid var(--site-accent);
+  outline-offset: 3px;
+}
+
+@media (max-width: 639px) {
+  .profile-contact-popover {
+    top: calc(100% + 5.15rem);
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
 .engineering-visual {
   display: block;
   width: 100%;
@@ -1601,8 +1704,10 @@ html {
 
 :root[data-theme] main .profile-header-photo {
   border: 1px solid color-mix(in srgb, var(--site-accent) 48%, var(--site-border));
-  border-radius: 50%;
-  box-shadow: none;
+  border-radius: 0.65rem;
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--site-accent) 14%, transparent),
+    0 6px 16px rgba(10, 25, 34, 0.16);
 }
 
 :root[data-theme] main .profile-actions {
@@ -1664,6 +1769,10 @@ html {
   background: transparent;
 }
 
+.site-footer-actions > .theme-toggle {
+  margin-left: 0.5rem;
+}
+
 @media (max-width: 639px) {
   :root[data-theme] main .profile-card {
     gap: 0.7rem 0.8rem;
@@ -1694,6 +1803,11 @@ html {
   :root[data-theme] main .site-nav {
     gap: 0 1.2rem;
     padding-block: 0.1rem;
+  }
+
+  .site-footer-actions {
+    width: 100%;
+    justify-content: space-between;
   }
 
   :root[data-theme] main .site-nav-link {
