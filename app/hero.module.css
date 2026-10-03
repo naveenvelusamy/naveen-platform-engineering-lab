@@ -1,0 +1,543 @@
+.hero {
+  isolation: isolate;
+  display: flex;
+  min-height: min(740px, calc(100svh - 9rem));
+  align-items: center;
+  padding-block: clamp(3.5rem, 7vh, 5.5rem);
+  background: transparent;
+}
+
+:global(html[data-theme="dark"]) .hero {
+  background: transparent;
+}
+
+:global(html[data-theme="dark"]) .heroGrid {
+  opacity: 0.13;
+  background-image:
+    linear-gradient(rgba(151, 190, 194, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(151, 190, 194, 0.06) 1px, transparent 1px);
+}
+
+:global(html[data-theme="dark"]) .heroGrid::after {
+  background-image:
+    linear-gradient(rgba(120, 192, 189, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120, 192, 189, 0.06) 1px, transparent 1px);
+}
+
+:global(html[data-theme="dark"]) .heroGlow {
+  background:
+    radial-gradient(ellipse 36rem 31rem at 78% 46%, rgba(73, 144, 158, 0.22), transparent 76%),
+    radial-gradient(ellipse 25rem 23rem at 58% 80%, rgba(48, 132, 133, 0.11), transparent 78%);
+}
+
+.heroGrid {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.22;
+  background-image:
+    linear-gradient(rgba(54, 91, 103, 0.075) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(54, 91, 103, 0.075) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 105% 90% at 50% 46%, #000 5%, transparent 100%);
+}
+
+:global(html[data-theme="dark"]) .secondaryCta {
+  border-color: #435861;
+  background: rgba(25, 38, 45, 0.9);
+  color: #d9e5e8;
+}
+
+:global(html[data-theme="dark"]) .secondaryCta:hover {
+  border-color: #78c0bd;
+  background: #223841;
+  color: #a8ddda;
+}
+
+.heroGrid::after {
+  position: absolute;
+  inset: -48px;
+  background-image:
+    linear-gradient(rgba(47, 119, 123, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(47, 119, 123, 0.06) 1px, transparent 1px);
+  background-size: 96px 96px;
+  content: "";
+  mask-image: radial-gradient(ellipse 85% 78% at 70% 48%, #000 4%, transparent 100%);
+}
+
+.heroGlow {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 34rem 29rem at 78% 46%, rgba(73, 144, 158, 0.15), transparent 76%),
+    radial-gradient(ellipse 23rem 21rem at 55% 82%, rgba(48, 132, 133, 0.07), transparent 78%);
+}
+
+:global(html[data-theme="dark"]) .topologyBoundaryOuter,
+:global(html[data-theme="dark"]) .topologyBoundaryInner {
+  fill: rgba(61, 121, 132, 0.025);
+  stroke: rgba(120, 192, 189, 0.18);
+}
+
+:global(html[data-theme="dark"]) .topologyBoundaryInner {
+  fill: rgba(61, 121, 132, 0.035);
+  stroke: rgba(120, 192, 189, 0.13);
+}
+
+:global(html[data-theme="dark"]) .topologyMeta {
+  fill: #8caeb4;
+}
+
+:global(html[data-theme="dark"]) .topologyPath {
+  stroke: rgba(115, 183, 190, 0.62);
+}
+
+:global(html[data-theme="dark"]) .topologyPulse {
+  stroke: #83d2d0;
+}
+
+:global(html[data-theme="dark"]) .topologyNodeSurface {
+  fill: rgba(29, 49, 57, 0.94);
+  stroke: rgba(120, 192, 189, 0.48);
+}
+
+:global(html[data-theme="dark"]) .topologyNodeDot {
+  fill: #79c5c5;
+}
+
+:global(html[data-theme="dark"]) .topologyLabel,
+:global(html[data-theme="dark"]) .topologyPlatformLabel {
+  fill: #c3dadd;
+}
+
+:global(html[data-theme="dark"]) .topologyPlatformLabel {
+  fill: #dff1f1;
+}
+
+:global(html[data-theme="dark"]) .topology:hover .topologyBoundaryOuter {
+  fill: rgba(72, 151, 164, 0.06);
+  stroke: rgba(120, 192, 189, 0.35);
+}
+
+:global(html[data-theme="dark"]) .topology:hover .topologyBoundaryInner {
+  stroke: rgba(120, 192, 189, 0.22);
+}
+
+:global(html[data-theme="dark"]) .topology:hover .topologyNodeSurface,
+:global(html[data-theme="dark"]) .topologyNode:hover .topologyNodeSurface {
+  fill: rgba(38, 72, 80, 0.98);
+  stroke: rgba(131, 210, 208, 0.82);
+  filter: drop-shadow(0 0 8px rgba(77, 183, 190, 0.24));
+}
+
+:global(html[data-theme="dark"]) .topology:hover .topologyNodeDot,
+:global(html[data-theme="dark"]) .topologyNode:hover .topologyNodeDot {
+  fill: #8ce0dc;
+  filter: drop-shadow(0 0 4px rgba(100, 207, 205, 0.75));
+}
+
+:global(html[data-theme="dark"]) .topology:hover .topologyLabel,
+:global(html[data-theme="dark"]) .topology:hover .topologyPlatformLabel,
+:global(html[data-theme="dark"]) .topologyNode:hover .topologyLabel,
+:global(html[data-theme="dark"]) .topologyNode:hover .topologyPlatformLabel {
+  fill: #effafa;
+}
+
+.heroLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+  align-items: center;
+  gap: clamp(2rem, 5vw, 5rem);
+}
+
+.copy {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+
+.topology {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 540px;
+  justify-self: end;
+  animation: settle-in 700ms cubic-bezier(0.2, 0.72, 0.25, 1) 460ms both;
+}
+
+.topologySvg {
+  display: block;
+  width: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 18px 42px rgba(20, 83, 103, 0.12));
+}
+
+.topologyBoundaryOuter,
+.topologyBoundaryInner {
+  fill: rgba(48, 119, 128, 0.018);
+  stroke: rgba(75, 142, 153, 0.16);
+  stroke-width: 1;
+  stroke-dasharray: 3 9;
+  transition:
+    fill 260ms ease,
+    stroke 260ms ease;
+}
+
+.topologyBoundaryInner {
+  fill: rgba(48, 119, 128, 0.025);
+  stroke: rgba(75, 142, 153, 0.11);
+  stroke-dasharray: none;
+}
+
+.topologyMeta {
+  fill: #66828a;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 9px;
+  font-weight: 650;
+  letter-spacing: 2px;
+}
+
+.topologyPath {
+  stroke: rgba(90, 144, 155, 0.58);
+  stroke-width: 1.35;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition:
+    opacity 240ms ease,
+    stroke 240ms ease,
+    stroke-width 240ms ease;
+}
+
+.topologyPulse {
+  stroke: #5baeb3;
+  stroke-dasharray: 2 14;
+  stroke-dashoffset: 0;
+  opacity: 0.75;
+  animation: topology-flow 8s linear infinite;
+}
+
+.topologyPulseDelayed {
+  animation-delay: -2s;
+}
+
+.topologyPulseThird {
+  animation-delay: -4s;
+}
+
+.topologyPulseFourth {
+  animation-delay: -6s;
+}
+
+.topologyNode {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: topology-drift 8s ease-in-out infinite alternate;
+}
+
+.iacNode {
+  animation-delay: -1.5s;
+}
+
+.runtimeNode {
+  animation-delay: -3s;
+}
+
+.observabilityNode {
+  animation-delay: -4.5s;
+}
+
+.topologyNodeSurface {
+  fill: rgba(244, 249, 249, 0.9);
+  stroke: rgba(81, 137, 148, 0.42);
+  stroke-width: 1.2;
+  transition:
+    fill 240ms ease,
+    stroke 240ms ease,
+    filter 240ms ease;
+}
+
+.topologyNodeDot {
+  fill: #4e9ca5;
+  transition:
+    fill 240ms ease,
+    filter 240ms ease;
+}
+
+.topologyLabel,
+.topologyPlatformLabel {
+  fill: #49636b;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 8px;
+  font-weight: 650;
+  letter-spacing: 1.3px;
+  dominant-baseline: middle;
+  transition: fill 240ms ease;
+}
+
+.topologyPlatformLabel {
+  fill: #315a64;
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 2.5px;
+}
+
+.topology:hover .topologyBoundaryOuter {
+  fill: rgba(72, 151, 164, 0.035);
+  stroke: rgba(83, 166, 178, 0.32);
+}
+
+.topology:hover .topologyBoundaryInner {
+  stroke: rgba(83, 166, 178, 0.2);
+}
+
+.topology:hover .topologyPath {
+  stroke: rgba(74, 151, 164, 0.84);
+  stroke-width: 1.7;
+}
+
+.topology:hover .topologyNodeSurface,
+.topologyNode:hover .topologyNodeSurface {
+  fill: rgba(232, 247, 247, 0.98);
+  stroke: rgba(68, 159, 171, 0.78);
+  filter: drop-shadow(0 0 8px rgba(77, 183, 190, 0.18));
+}
+
+.topology:hover .topologyNodeDot,
+.topologyNode:hover .topologyNodeDot {
+  fill: #48b2b8;
+  filter: drop-shadow(0 0 4px rgba(72, 178, 184, 0.7));
+}
+
+.topology:hover .topologyLabel,
+.topology:hover .topologyPlatformLabel,
+.topologyNode:hover .topologyLabel,
+.topologyNode:hover .topologyPlatformLabel {
+  fill: #244d59;
+}
+
+.eyebrow,
+.name,
+.statement,
+.description,
+.actions,
+.credential {
+  animation: settle-in 560ms cubic-bezier(0.2, 0.72, 0.25, 1) both;
+}
+
+.eyebrow {
+  animation-delay: 30ms;
+}
+
+.name {
+  animation-delay: 100ms;
+}
+
+.statement {
+  animation-delay: 190ms;
+}
+
+.description {
+  animation-delay: 280ms;
+}
+
+.actions {
+  animation-delay: 370ms;
+}
+
+.primaryCta,
+.secondaryCta {
+  min-height: 48px;
+  border-radius: 3px;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.primaryCta {
+  background-color: #2f777b;
+  box-shadow: 0 5px 14px rgba(35, 98, 105, 0.18);
+}
+
+.primaryCta:hover {
+  transform: translateY(-2px);
+  background-color: #28696d;
+  box-shadow: 0 9px 20px rgba(35, 98, 105, 0.22);
+}
+
+.primaryCta span {
+  display: inline-block;
+  transition: transform 180ms ease;
+}
+
+.primaryCta:hover span {
+  transform: translateX(3px);
+}
+
+.primaryCta:focus-visible,
+.secondaryCta:focus-visible {
+  outline: 3px solid #256fae;
+  outline-offset: 4px;
+}
+
+.secondaryCta {
+  border: 1px solid #c6d1c2;
+  background: rgba(250, 251, 245, 0.84);
+  color: #304a3e;
+}
+
+.secondaryCta:hover {
+  transform: translateY(-1px);
+  border-color: #2f777b;
+  background: #fbfcfc;
+  color: #28696d;
+}
+
+.credentials {
+  max-width: 720px;
+}
+
+.credential {
+  min-width: 0;
+  padding-inline: 0.9rem;
+  animation-delay: 520ms;
+  transition: border-color 180ms ease;
+}
+
+.credential:first-child {
+  padding-left: 0;
+}
+
+.credential + .credential {
+  border-left: 1px solid #cbd7e0;
+}
+
+:global(html[data-theme="dark"]) .credential + .credential {
+  border-color: #304251;
+}
+
+.credentialTitle {
+  color: #10243d;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.015em;
+  line-height: 1.4;
+  transition: color 180ms ease;
+}
+
+:global(html[data-theme="dark"]) .credentialTitle {
+  color: #e4edf3;
+}
+
+.credentialDetail {
+  margin-top: 0.35rem;
+  color: #52677d;
+  font-size: 0.6875rem;
+  line-height: 1.55;
+}
+
+:global(html[data-theme="dark"]) .credentialDetail {
+  color: #a4b5c3;
+}
+
+.credential:hover .credentialTitle {
+  color: #28696d;
+}
+
+@keyframes settle-in {
+  from {
+    opacity: 0;
+    transform: translateY(9px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes topology-flow {
+  to {
+    stroke-dashoffset: -64;
+  }
+}
+
+@keyframes topology-drift {
+  from {
+    translate: 0 0;
+  }
+
+  to {
+    translate: 0 -2px;
+  }
+}
+
+@media (max-width: 900px) {
+  .hero {
+    min-height: 0;
+  }
+
+  .heroLayout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2.5rem;
+  }
+
+  .topology {
+    width: min(100%, 560px);
+    justify-self: center;
+  }
+}
+
+@media (max-width: 639px) {
+  .hero {
+    padding-block: 3.5rem 3rem;
+  }
+
+  .credential {
+    padding: 0.15rem 0;
+  }
+
+  .credential + .credential {
+    border-top: 1px solid #d8e1e8;
+    border-left: 0;
+    padding-top: 0.7rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eyebrow,
+  .name,
+  .statement,
+  .description,
+  .actions,
+  .credential {
+    animation: none;
+  }
+
+  .topology,
+  .topologyNode {
+    animation: none;
+  }
+
+  .topologyPulse {
+    animation: none;
+  }
+
+  .primaryCta,
+  .primaryCta span,
+  .secondaryCta,
+  .credentialTitle {
+    transition: none;
+  }
+
+  .primaryCta:hover,
+  .secondaryCta:hover {
+    transform: none;
+  }
+}
