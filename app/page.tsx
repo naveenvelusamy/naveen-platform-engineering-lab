@@ -148,7 +148,31 @@ export default function Home() {
                 </svg>
                 <span className="sr-only">LinkedIn</span>
               </a>
-              <ThemeToggle />
+              <details className="profile-contact" name="profile-contact">
+                <summary aria-label="Show email address" title="Email">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="3.5" y="5.5" width="17" height="13" rx="1.5" />
+                    <path d="m4.5 7 7.5 6 7.5-6" />
+                  </svg>
+                </summary>
+                <div className="profile-contact-popover">
+                  <span>Email</span>
+                  <a href="mailto:naveenveluchami@gmail.com">
+                    naveenveluchami@gmail.com
+                  </a>
+                </div>
+              </details>
+              <details className="profile-contact" name="profile-contact">
+                <summary aria-label="Show mobile number" title="Phone">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M7.1 3.75h3l1.4 4-2 1.65a15.4 15.4 0 0 0 5.1 5.1l1.65-2 4 1.4v3c0 1.1-.9 2-2 2A15.5 15.5 0 0 1 5.1 5.75c0-1.1.9-2 2-2Z" />
+                  </svg>
+                </summary>
+                <div className="profile-contact-popover">
+                  <span>Mobile</span>
+                  <a href="tel:+918056507858">+918056507858</a>
+                </div>
+              </details>
             </div>
           </header>
 
@@ -425,10 +449,10 @@ export default function Home() {
             </div>
           </section>
 
-          <footer className="border-t border-[#c8d5e2] py-8 text-sm text-[#52677d]">
+          <footer className="site-footer border-t border-[#c8d5e2] py-8 text-sm text-[#52677d]">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p>Naveen Velusamy</p>
-              <div className="flex gap-4">
+              <div className="site-footer-actions flex flex-wrap items-center gap-4">
                 <a
                   href="/naveen-velusamy-resume.pdf"
                   className="transition-colors duration-200 hover:text-[#247f75]"
@@ -443,6 +467,7 @@ export default function Home() {
                 >
                   GitHub
                 </a>
+                <ThemeToggle />
               </div>
             </div>
           </footer>
