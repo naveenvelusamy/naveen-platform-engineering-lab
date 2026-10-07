@@ -28,6 +28,54 @@ const credentials = [
   },
 ];
 
+const skillGroups = [
+  {
+    title: "Cloud platforms",
+    skills: [
+      { name: "Azure" },
+      { name: "AWS" },
+    ],
+  },
+  {
+    title: "Platform & containers",
+    skills: [
+      { name: "Kubernetes" },
+      { name: "AKS" },
+      { name: "KubeVirt" },
+      { name: "Helm" },
+      { name: "Istio" },
+    ],
+  },
+  {
+    title: "Infrastructure & delivery",
+    skills: [
+      { name: "Terraform" },
+      { name: "OpenTofu" },
+      { name: "Azure DevOps" },
+      { name: "Ansible" },
+      { name: "Jenkins" },
+      { name: "Python" },
+    ],
+  },
+  {
+    title: "Systems & observability",
+    skills: [
+      { name: "Linux" },
+      { name: "Prometheus" },
+      { name: "Grafana" },
+      { name: "Mimir" },
+      { name: "Loki" },
+      { name: "Azure Monitor" },
+    ],
+  },
+];
+
+const skills = skillGroups.flatMap((group) => group.skills);
+const skillMarqueeRows = [
+  skills.filter((_, index) => index % 2 === 0),
+  skills.filter((_, index) => index % 2 === 1),
+];
+
 const experiences = [
   {
     company: "Alegeus Technologies",
@@ -266,66 +314,51 @@ export default function Home() {
                 </div>
               </div>
 
-              <div
-                className={styles.topology}
-                role="img"
-                aria-label="Conceptual platform engineering topology showing infrastructure as code feeding a platform connected to CI/CD, runtime, and observability."
+              <section
+                className={styles.skillsPanel}
+                aria-labelledby="hero-skills-heading"
               >
-                <svg
-                  className={styles.topologySvg}
-                  viewBox="0 0 560 450"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  aria-hidden="true"
-                >
-                  <rect className={styles.topologyBoundaryOuter} x="42" y="124" width="476" height="274" rx="28" />
-                  <rect className={styles.topologyBoundaryInner} x="62" y="144" width="436" height="234" rx="22" />
-                  <text className={styles.topologyMeta} x="84" y="169">PLATFORM LAYER</text>
-
-                  <path className={styles.topologyPath} d="M280 91V179" />
-                  <path className={styles.topologyPath} d="M280 237V275H112V307" />
-                  <path className={styles.topologyPath} d="M280 237V307" />
-                  <path className={styles.topologyPath} d="M280 275H448V307" />
-                  <path className={`${styles.topologyPath} ${styles.topologyPulse}`} d="M280 91V179" />
-                  <path className={`${styles.topologyPath} ${styles.topologyPulse} ${styles.topologyPulseDelayed}`} d="M280 237V275H112V307" />
-                  <path className={`${styles.topologyPath} ${styles.topologyPulse} ${styles.topologyPulseThird}`} d="M280 237V307" />
-                  <path className={`${styles.topologyPath} ${styles.topologyPulse} ${styles.topologyPulseFourth}`} d="M280 237V275H448V307" />
-
-                  <g className={`${styles.topologyNode} ${styles.iacNode}`}>
-                    <rect className={styles.topologyNodeSurface} x="200" y="34" width="160" height="58" rx="18" />
-                    <circle className={styles.topologyNodeDot} cx="208" cy="63" r="3.5" />
-                    <text className={styles.topologyLabel} x="285" y="67" textAnchor="middle">INFRASTRUCTURE AS CODE</text>
-                  </g>
-
-                  <g className={`${styles.topologyNode} ${styles.platformNode}`}>
-                    <rect className={styles.topologyNodeSurface} x="190" y="179" width="180" height="58" rx="18" />
-                    <circle className={styles.topologyNodeDot} cx="215" cy="208" r="4" />
-                    <text className={styles.topologyPlatformLabel} x="285" y="213" textAnchor="middle">PLATFORM</text>
-                  </g>
-
-                  <g className={`${styles.topologyNode} ${styles.cicdNode}`}>
-                    <rect className={styles.topologyNodeSurface} x="62" y="307" width="100" height="52" rx="15" />
-                    <circle className={styles.topologyNodeDot} cx="78" cy="333" r="3" />
-                    <text className={styles.topologyLabel} x="117" y="337" textAnchor="middle">CI/CD</text>
-                  </g>
-                  <g className={`${styles.topologyNode} ${styles.runtimeNode}`}>
-                    <rect className={styles.topologyNodeSurface} x="230" y="307" width="100" height="52" rx="15" />
-                    <circle className={styles.topologyNodeDot} cx="246" cy="333" r="3" />
-                    <text className={styles.topologyLabel} x="285" y="337" textAnchor="middle">RUNTIME</text>
-                  </g>
-                  <g className={`${styles.topologyNode} ${styles.observabilityNode}`}>
-                    <rect className={styles.topologyNodeSurface} x="398" y="307" width="100" height="52" rx="15" />
-                    <circle className={styles.topologyNodeDot} cx="402" cy="333" r="3" />
-                    <text className={styles.topologyLabel} x="453" y="337" textAnchor="middle">OBSERVABILITY</text>
-                  </g>
-                </svg>
-              </div>
+                <header className={styles.skillsHeader}>
+                  <p className={styles.skillsEyebrow}>
+                    TECHNOLOGIES I WORK WITH
+                  </p>
+                  <h2 id="hero-skills-heading" className={styles.skillsTitle}>
+                    Platform engineering skills
+                  </h2>
+                </header>
+                <div className={styles.skillsMarquee}>
+                  {skillMarqueeRows.map((rowSkills, rowIndex) => (
+                    <div
+                      className={`${styles.skillMarqueeRow}${rowIndex === 1 ? ` ${styles.skillMarqueeRowReverse}` : ""}`}
+                      key={rowIndex}
+                    >
+                      <div className={styles.skillMarqueeTrack}>
+                        {[false, true].map((isDuplicate) => (
+                          <ul
+                            className={styles.skillSequence}
+                            key={isDuplicate ? "duplicate" : "skills"}
+                            aria-hidden={isDuplicate || undefined}
+                          >
+                            {rowSkills.map((skill) => (
+                              <li
+                                className={styles.skillCard}
+                                key={skill.name}
+                              >
+                                {skill.name}
+                              </li>
+                            ))}
+                          </ul>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
             </div>
           </section>
 
           <section id="experience" className="experience-section">
             <header className="experience-heading">
-              <p className="experience-kicker">My professional journey</p>
               <h2 className="experience-title">Engineering Journey</h2>
               <div className="experience-pathway">
                 {[
@@ -344,6 +377,7 @@ export default function Home() {
                   </span>
                 ))}
               </div>
+              <h3 className="work-experience-title">Work Experience</h3>
             </header>
 
             <div className="experience-timeline">
