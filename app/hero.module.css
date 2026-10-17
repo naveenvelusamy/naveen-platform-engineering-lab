@@ -31,22 +31,22 @@
 }
 
 :global(html[data-theme="light"]) .heroGrid {
-  opacity: 0.18;
+  opacity: 0.2;
   background-image:
-    linear-gradient(rgba(53, 91, 143, 0.075) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(53, 91, 143, 0.075) 1px, transparent 1px);
+    linear-gradient(rgba(82, 104, 216, 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(82, 104, 216, 0.09) 1px, transparent 1px);
 }
 
 :global(html[data-theme="light"]) .heroGrid::after {
   background-image:
-    linear-gradient(rgba(113, 91, 145, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(113, 91, 145, 0.05) 1px, transparent 1px);
+    linear-gradient(rgba(8, 126, 139, 0.065) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(8, 126, 139, 0.065) 1px, transparent 1px);
 }
 
 :global(html[data-theme="light"]) .heroGlow {
   background:
-    radial-gradient(ellipse 34rem 29rem at 78% 46%, rgba(100, 117, 143, 0.09), transparent 76%),
-    radial-gradient(ellipse 23rem 21rem at 55% 82%, rgba(113, 91, 145, 0.05), transparent 78%);
+    radial-gradient(ellipse 34rem 29rem at 78% 46%, rgba(82, 104, 216, 0.14), transparent 76%),
+    radial-gradient(ellipse 23rem 21rem at 55% 82%, rgba(8, 126, 139, 0.1), transparent 78%);
 }
 
 .heroGrid {
@@ -76,15 +76,15 @@
 }
 
 :global(html[data-theme="light"]) .secondaryCta {
-  border-color: #cbd5dc;
-  background: rgba(255, 255, 255, 0.76);
-  color: #4a4962;
+  border-color: var(--site-border);
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--site-ink);
 }
 
 :global(html[data-theme="light"]) .secondaryCta:hover {
-  border-color: #715b91;
+  border-color: var(--site-accent-cool);
   background: #ffffff;
-  color: #715b91;
+  color: var(--site-accent-cool);
 }
 
 .heroGrid::after {
