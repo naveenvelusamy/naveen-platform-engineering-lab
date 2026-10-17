@@ -39,14 +39,14 @@
 
 :global(html[data-theme="light"]) .heroGrid::after {
   background-image:
-    linear-gradient(rgba(8, 126, 120, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(8, 126, 120, 0.06) 1px, transparent 1px);
+    linear-gradient(rgba(113, 91, 145, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(113, 91, 145, 0.05) 1px, transparent 1px);
 }
 
 :global(html[data-theme="light"]) .heroGlow {
   background:
-    radial-gradient(ellipse 34rem 29rem at 78% 46%, rgba(68, 111, 179, 0.11), transparent 76%),
-    radial-gradient(ellipse 23rem 21rem at 55% 82%, rgba(8, 126, 120, 0.07), transparent 78%);
+    radial-gradient(ellipse 34rem 29rem at 78% 46%, rgba(100, 117, 143, 0.09), transparent 76%),
+    radial-gradient(ellipse 23rem 21rem at 55% 82%, rgba(113, 91, 145, 0.05), transparent 78%);
 }
 
 .heroGrid {
@@ -76,15 +76,15 @@
 }
 
 :global(html[data-theme="light"]) .secondaryCta {
-  border-color: #c5d2df;
+  border-color: #cbd5dc;
   background: rgba(255, 255, 255, 0.76);
-  color: #30485f;
+  color: #4a4962;
 }
 
 :global(html[data-theme="light"]) .secondaryCta:hover {
-  border-color: #087e78;
+  border-color: #715b91;
   background: #ffffff;
-  color: #087e78;
+  color: #715b91;
 }
 
 .heroGrid::after {

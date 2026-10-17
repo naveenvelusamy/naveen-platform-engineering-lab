@@ -1,28 +1,28 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f4f7fa;
-  --foreground: #1d2b3a;
-  --site-surface: rgba(255, 255, 255, 0.96);
-  --site-surface-raised: #ffffff;
-  --site-surface-muted: #eaf0f6;
-  --site-border: #d5dee8;
-  --site-ink: #1d2b3a;
-  --site-muted: #5b6d80;
-  --site-accent: #087e78;
-  --site-accent-cool: #335fba;
-  --project-surface: #e8f0f4;
-  --project-surface-end: #dce7ef;
-  --project-ink: #22354a;
-  --project-muted: #536a80;
-  --project-grid: rgba(53, 91, 143, 0.08);
-  --project-line: #6e8ca7;
-  --project-pulse: #168a80;
-  --project-node: rgba(255, 255, 255, 0.94);
-  --project-node-border: #7995ad;
-  --project-node-ink: #29455f;
-  --project-detail: #5f7489;
-  --project-dot: #168a80;
+  --background: #f0eef4;
+  --foreground: #373544;
+  --site-surface: rgba(248, 246, 250, 0.96);
+  --site-surface-raised: #f2eff6;
+  --site-surface-muted: #e8e4ee;
+  --site-border: #d4cfdf;
+  --site-ink: #373544;
+  --site-muted: #686477;
+  --site-accent: #715b91;
+  --site-accent-cool: #64758f;
+  --project-surface: #ebe8f1;
+  --project-surface-end: #e1e5ee;
+  --project-ink: #3b3b50;
+  --project-muted: #626578;
+  --project-grid: rgba(90, 77, 127, 0.08);
+  --project-line: #8585a2;
+  --project-pulse: #806ba5;
+  --project-node: rgba(248, 246, 250, 0.96);
+  --project-node-border: #9692ac;
+  --project-node-ink: #4d4968;
+  --project-detail: #6e6a7d;
+  --project-dot: #806ba5;
 }
 
 :root[data-theme="dark"] {
@@ -142,8 +142,8 @@ html {
 
 :root[data-theme="light"] .site-page {
   background:
-    radial-gradient(ellipse at 84% 10%, rgba(68, 111, 179, 0.105), transparent 34rem),
-    radial-gradient(ellipse at 24% 40%, rgba(8, 126, 120, 0.055), transparent 38rem),
+    radial-gradient(ellipse at 84% 10%, rgba(100, 117, 143, 0.09), transparent 34rem),
+    radial-gradient(ellipse at 24% 40%, rgba(113, 91, 145, 0.045), transparent 38rem),
     var(--background);
 }
 
@@ -166,8 +166,8 @@ html {
 :root[data-theme="light"] .site-geometry {
   opacity: 0.55;
   background:
-    linear-gradient(145deg, transparent 0 21%, rgba(89, 139, 157, 0.54) 21% 43%, transparent 43%),
-    linear-gradient(32deg, transparent 0 38%, rgba(66, 145, 146, 0.5) 38% 64%, transparent 64%);
+    linear-gradient(145deg, transparent 0 21%, rgba(142, 132, 166, 0.38) 21% 43%, transparent 43%),
+    linear-gradient(32deg, transparent 0 38%, rgba(111, 126, 153, 0.32) 38% 64%, transparent 64%);
 }
 
 .site-shell {
@@ -398,11 +398,11 @@ html {
 }
 
 :root[data-theme="light"] .profile-photo-frame {
-  box-shadow: 0 0 0 5px rgba(49, 87, 213, 0.1);
+  box-shadow: 0 0 0 5px rgba(113, 91, 145, 0.1);
 }
 
 :root[data-theme="light"] .site-nav-link-active {
-  background: #e4eff0;
+  background: #e8e3ef;
 }
 
 :root[data-theme="dark"] .site-content > section[id="experience"] {
@@ -764,7 +764,7 @@ html {
 :root[data-theme="light"] .site-geometry {
   opacity: 0.48;
   background:
-    radial-gradient(ellipse at 78% 20%, rgba(57, 126, 137, 0.08), transparent 32rem),
+    radial-gradient(ellipse at 78% 20%, rgba(100, 117, 143, 0.08), transparent 32rem),
     linear-gradient(rgba(54, 91, 103, 0.045) 1px, transparent 1px),
     linear-gradient(90deg, rgba(54, 91, 103, 0.045) 1px, transparent 1px);
   background-size: auto, 52px 52px, 52px 52px;
@@ -900,16 +900,16 @@ html {
 
 :root[data-theme="light"] .site-page {
   background:
-    radial-gradient(ellipse at 90% 16%, rgba(57, 126, 137, 0.09), transparent 32rem),
-    #f1f4f4;
+    radial-gradient(ellipse at 90% 16%, rgba(100, 117, 143, 0.08), transparent 32rem),
+    var(--background);
 }
 
 :root[data-theme="light"] .site-geometry {
   opacity: 0.31;
   background:
-    radial-gradient(ellipse at 78% 20%, rgba(68, 111, 179, 0.07), transparent 32rem),
-    linear-gradient(rgba(53, 91, 143, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(53, 91, 143, 0.035) 1px, transparent 1px);
+    radial-gradient(ellipse at 78% 20%, rgba(100, 117, 143, 0.065), transparent 32rem),
+    linear-gradient(rgba(90, 77, 127, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(90, 77, 127, 0.035) 1px, transparent 1px);
 }
 
 :root[data-theme="light"] [class~="text-[#10243d]"] {
@@ -917,7 +917,7 @@ html {
 }
 
 :root[data-theme="light"] [class~="text-[#173653]"] {
-  color: #30485f;
+  color: #4a4962;
 }
 
 :root[data-theme="light"] [class~="text-[#52677d]"] {
@@ -1861,35 +1861,41 @@ html {
 }
 
 :root[data-theme] main .profile-card {
-  border: 0;
-  border-bottom: 1px solid var(--site-border);
-  border-radius: 0;
-  padding: 0 0 0.9rem;
-  background: transparent;
+  border: 1px solid var(--site-border);
+  border-radius: 1rem;
+  padding: clamp(1rem, 2.2vw, 1.5rem);
+  background:
+    linear-gradient(115deg, color-mix(in srgb, var(--site-accent) 5%, transparent), transparent 55%),
+    var(--site-surface);
+  box-shadow: 0 16px 38px color-mix(in srgb, var(--site-ink) 7%, transparent);
 }
 
 :root[data-theme] main .profile-header-photo {
   border: 1px solid color-mix(in srgb, var(--site-accent) 48%, var(--site-border));
-  border-radius: 0.65rem;
+  border-radius: 0.85rem;
+  width: 4.5rem;
+  height: 4.5rem;
   box-shadow:
     0 0 0 3px color-mix(in srgb, var(--site-accent) 14%, transparent),
     0 6px 16px rgba(10, 25, 34, 0.16);
 }
 
 :root[data-theme] main .profile-actions {
-  gap: clamp(0.8rem, 1.8vw, 1.4rem);
+  gap: clamp(0.55rem, 1.2vw, 1rem);
 }
 
 :root[data-theme] main .profile-actions > .profile-resume {
-  border: 0;
-  border-radius: 0;
-  padding-inline: 0;
-  color: var(--site-muted);
+  min-height: 2.5rem;
+  border: 1px solid color-mix(in srgb, var(--site-accent) 38%, var(--site-border));
+  border-radius: 0.65rem;
+  padding-inline: 0.85rem;
+  background: color-mix(in srgb, var(--site-accent) 7%, var(--site-surface));
+  color: var(--site-accent);
   font-size: 0.8rem;
 }
 
 :root[data-theme] main .profile-actions > .profile-resume:hover {
-  background: transparent;
+  background: color-mix(in srgb, var(--site-accent) 13%, var(--site-surface));
   color: var(--site-accent);
 }
 
@@ -1902,36 +1908,104 @@ html {
   height: 1.05rem;
 }
 
+:root[data-theme] main .profile-actions > .profile-social {
+  display: inline-grid;
+  width: 2.5rem;
+  min-height: 2.5rem;
+  place-items: center;
+  border: 1px solid var(--site-border);
+  border-radius: 0.65rem;
+  color: var(--site-muted);
+}
+
+:root[data-theme] main .profile-actions > .profile-social:hover {
+  border-color: color-mix(in srgb, var(--site-accent) 38%, var(--site-border));
+  background: color-mix(in srgb, var(--site-accent) 7%, var(--site-surface));
+  color: var(--site-accent);
+}
+
 :root[data-theme] main .site-nav {
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  gap: 0 clamp(0.8rem, 2.3vw, 2rem);
-  border: 0;
-  border-bottom: 1px solid var(--site-border);
-  border-radius: 0;
-  padding: 0;
-  background: transparent;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  gap: 0.4rem;
+  border: 1px solid var(--site-border);
+  border-radius: 0.9rem;
+  padding: 0.4rem;
+  background: color-mix(in srgb, var(--site-surface) 92%, transparent);
+  box-shadow: 0 10px 26px color-mix(in srgb, var(--site-ink) 5%, transparent);
 }
 
 :root[data-theme] main .site-nav-link {
-  min-height: 2.8rem;
-  flex: 0 0 auto;
-  border-bottom: 2px solid transparent;
-  border-radius: 0;
-  padding-inline: 0.1rem;
+  min-height: 3rem;
+  flex: 1 1 0;
+  justify-content: center;
+  border: 0;
+  border-radius: 0.65rem;
+  padding-inline: clamp(0.4rem, 1vw, 1rem);
 }
 
 :root[data-theme] main .site-nav-link:hover {
   transform: none;
+  background: color-mix(in srgb, var(--site-accent) 6%, transparent);
 }
 
 :root[data-theme] main .site-nav-link-active {
-  border-bottom-color: var(--site-accent);
-  background: transparent;
+  background: color-mix(in srgb, var(--site-accent) 11%, var(--site-surface));
+  color: var(--site-accent);
 }
 
-:root[data-theme] main .site-nav-link-active {
-  border-bottom-color: var(--site-accent);
+.site-geometry::before,
+.site-geometry::after {
+  position: absolute;
+  display: block;
+  content: "";
+  pointer-events: none;
+}
+
+.site-geometry::before {
+  top: 0;
+  left: max(-7rem, calc((100vw - 1180px) / 2 - 8rem));
+  width: clamp(18rem, 34vw, 30rem);
+  height: 25rem;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--site-accent) 15%, transparent),
+    color-mix(in srgb, var(--site-accent-cool) 10%, transparent)
+  );
+  clip-path: polygon(50% 0, 100% 28%, 100% 76%, 52% 100%, 0 74%, 0 27%);
+}
+
+.site-geometry::after {
+  right: max(-8rem, calc((100vw - 1180px) / 2 - 9rem));
+  bottom: 12%;
+  width: clamp(14rem, 26vw, 23rem);
+  height: 22rem;
+  background: color-mix(in srgb, var(--site-accent-cool) 9%, transparent);
+  clip-path: polygon(50% 0, 100% 28%, 100% 76%, 52% 100%, 0 74%, 0 27%);
+}
+
+.portfolio-frame {
+  gap: 0.8rem;
+}
+
+.site-content {
+  width: 100%;
+  border: 1px solid var(--site-border);
+  border-radius: 1.2rem;
+  padding: 0 clamp(1.25rem, 3.5vw, 3rem);
+  background: color-mix(in srgb, var(--site-surface) 96%, transparent);
+  box-shadow: 0 20px 52px color-mix(in srgb, var(--site-ink) 7%, transparent);
+}
+
+.site-content > .site-hero {
+  min-width: 0;
+  padding-inline: 0;
+}
+
+.site-content > section:not(.site-hero),
+.site-content > footer {
+  padding-inline: 0;
   background: transparent;
 }
 
@@ -1939,27 +2013,40 @@ html {
   margin-left: 0.5rem;
 }
 
+@media (max-width: 760px) {
+  :root[data-theme] main .profile-header-photo {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+
+  :root[data-theme] main .site-nav-link {
+    min-height: 2.7rem;
+    font-size: 0.78rem;
+  }
+}
+
 @media (max-width: 639px) {
   :root[data-theme] main .profile-card {
     gap: 0.7rem 0.8rem;
-    padding-bottom: 0.8rem;
+    padding: 0.8rem;
   }
 
   :root[data-theme] main .profile-actions {
     flex: 1 0 100%;
-    gap: 1rem;
+    gap: 0.55rem;
   }
 
   :root[data-theme] main .profile-actions > .profile-resume {
     min-height: 2rem;
+    padding-inline: 0.65rem;
   }
 
   :root[data-theme] main .profile-actions > .theme-toggle {
     min-height: 2rem;
     margin-left: auto;
-    border: 0;
+    border: 1px solid var(--site-border);
     padding: 0.2rem;
-    background: transparent;
+    background: var(--site-surface);
   }
 
   .theme-toggle > span:not(.theme-toggle-icon) {
@@ -1967,8 +2054,19 @@ html {
   }
 
   :root[data-theme] main .site-nav {
-    gap: 0 1.2rem;
-    padding-block: 0.1rem;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.25rem;
+    padding: 0.3rem;
+  }
+
+  .site-content {
+    border-radius: 1rem;
+    padding-inline: 1rem;
+  }
+
+  .site-content > .site-hero {
+    padding-block: 3.25rem 2.5rem;
   }
 
   .site-footer-actions {
@@ -1978,10 +2076,10 @@ html {
 
   :root[data-theme] main .site-nav-link {
     min-width: 0;
-    min-height: 2.4rem;
-    flex: 0 0 auto;
+    min-height: 2.6rem;
+    flex: 1 1 0;
     justify-content: flex-start;
-    padding-inline: 0;
+    padding-inline: 0.55rem;
   }
 
   :root[data-theme] main .site-nav-link > span {
