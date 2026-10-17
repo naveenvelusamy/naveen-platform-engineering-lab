@@ -1,9 +1,9 @@
 import LessonLab from "./lesson-lab";
 
 export const metadata = {
-  title: "Python Setup Lab | Naveen Velusamy",
+  title: "Python Fundamentals | Naveen Velusamy",
   description:
-    "A hands-on introduction to Python setup, pip, and virtual environments for DevOps work.",
+    "Chapter 1: learn Python fundamentals with runnable examples, DevOps exercises, progressive hints, and explained quizzes.",
 };
 
 export default function PythonSetupPage() {
