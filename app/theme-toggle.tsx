@@ -7,11 +7,11 @@ const THEME_STORAGE_KEY = "naveen-portfolio-theme";
 type Theme = "dark" | "light";
 
 function getThemeSnapshot(): Theme {
-  return window.localStorage.getItem(THEME_STORAGE_KEY) === "dark" ? "dark" : "light";
+  return window.localStorage.getItem(THEME_STORAGE_KEY) === "light" ? "light" : "dark";
 }
 
 function getServerThemeSnapshot(): Theme {
-  return "light";
+  return "dark";
 }
 
 function subscribeToTheme(onChange: () => void) {

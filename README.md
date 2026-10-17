@@ -16,6 +16,10 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Python learning lab
+
+The lessons at `/topics/python-setup` use Pyodide to run real Python in a browser Web Worker. Runtime files are copied from the pinned npm package into the ignored `public/pyodide` directory automatically before `npm run dev`, `npm run build`, and `npm start`. The browser downloads those same-origin files when the lab opens; learner code runs locally and is not sent to a server. This provides a Python interpreter and standard library, not a Linux shell or general third-party package installation.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
