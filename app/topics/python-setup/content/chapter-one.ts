@@ -9,52 +9,52 @@ export const lessons: Lesson[] = [
   {
     "id": "why-python",
     "kind": "lesson",
-    "title": "Programs, values, and output",
-    "explanation": "A program is a sequence of instructions. Python executes top-level statements in order. Start by predicting the output, run the example, then change one thing and compare. This predict\u2013run\u2013inspect cycle helps you solve problems independently. Text in quotes is a string; # starts a comment that Python ignores.",
-    "example": "print(\"Starting checks\")\nprint(\"api\", \"OK\")",
-    "walkthrough": "print(...) calls a function that displays values. Parentheses enclose its arguments; commas separate arguments and print adds spaces between them. Each call normally ends with a newline. Quotes delimit text and do not appear in the output. A missing closing quote causes a SyntaxError: read the message and check the indicated line.",
-    "useCase": "An automation script can print a deployment checklist or a readable status report. These examples only print simulated status; they do not check real servers.",
+    "title": "Hello, Python! 🐍",
+    "explanation": "Your first step into programming. No previous coding experience required.",
+    "example": "print(\"Hello, World!\")",
+    "walkthrough": "This tells Python to display a message.",
+    "useCase": "Later, an automation program can display a message for the person running it. For now, we will only display text; no servers are checked or changed.",
     "outcomes": [
-      "Read a short program in execution order.",
-      "Print strings and distinguish code from comments.",
-      "Use an error message to locate a syntax mistake."
+      "Explain that Python lets you give instructions to a computer.",
+      "Write one print instruction to display your own message.",
+      "Predict the message and compare it with the output."
     ],
     "exercises": [
       {
-        "title": "Beginner practice",
-        "prompt": "Print your name and a learning goal on separate lines.",
-        "starter": "# Add two print calls here.\n",
+        "title": "Now it’s your turn",
+        "prompt": "Write a Python instruction to display your own message. Choose any short message, such as a greeting. Before running it, say what you expect to see.",
+        "starter": "\n",
         "hints": [
-          "Start with a quoted piece of text.",
-          "Use one print(...) call for each line."
+          "Look back at the first instruction. Which part contains the message?",
+          "Keep print, the parentheses, and the pair of quotes. Replace only the text inside the quotes."
         ],
-        "expected": "Two lines: your name, then your goal."
+        "expected": "Your chosen message appears once, without the surrounding quotes."
       },
       {
-        "title": "Infrastructure practice",
-        "prompt": "Print the three deployment phases: validate, deploy, verify, in that order.",
-        "starter": "# Print one phase per line.\n",
+        "title": "A small automation message",
+        "prompt": "Imagine a program that displays a message before someone starts work. Display the text Ready to begin. This only displays a message; it does not perform a check.",
+        "starter": "\n",
         "hints": [
-          "Treat each phase as text.",
-          "Write three print calls in the required order."
+          "This uses the same single instruction as your greeting.",
+          "Put the message between matching quotes inside the parentheses."
         ],
-        "expected": "validate\ndeploy\nverify"
+        "expected": "Ready to begin"
       }
     ],
     "quiz": {
-      "question": "What does print(\"api\", \"OK\") display?",
+      "question": "What will print(\"Hello, World!\") display?",
       "options": [
         {
-          "text": "api OK",
-          "explanation": "Correct: print separates these two arguments with a space."
+          "text": "Hello, World!",
+          "explanation": "The text inside the quotes is displayed. The quotes and parentheses are part of the instruction."
         },
         {
-          "text": "\"api\", \"OK\"",
-          "explanation": "Quotes and the comma are syntax, not characters printed here."
+          "text": "\"Hello, World!\"",
+          "explanation": "The quotes mark where the text starts and ends. They are not displayed."
         },
         {
-          "text": "Nothing",
-          "explanation": "Calling print produces output."
+          "text": "print(\"Hello, World!\")",
+          "explanation": "Python follows the instruction and displays its message, rather than displaying the instruction itself."
         }
       ],
       "answer": 0

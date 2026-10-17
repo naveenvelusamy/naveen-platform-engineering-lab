@@ -1,10 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { loadPyodide } from "pyodide";
+import { beginnerPath, firstProgram } from "../app/topics/python-setup/content/beginner-path.ts";
 import { lessons } from "../app/topics/python-setup/content/chapter-one.ts";
 
 const expectedExamples = [
-  "Starting checks\napi OK",
+  "Hello, World!",
   null, // Interpreter version varies with the installed runtime.
   "api: 1.5 CPU; enabled=True",
   "api 3\n3",
@@ -60,4 +61,18 @@ test("All examples and exercise starters execute in the installed browser Python
       }
     }
   }
+});
+
+
+test("The first lesson teaches one instruction and keeps future topics in a proposal", () => {
+  const first = lessons[0];
+  assert.equal(first.id, "why-python", "Keep the existing completion identity");
+  assert.equal(first.example, 'print("Hello, World!")');
+  assert.equal(first.example.split("\n").length, 1);
+  assert.equal(firstProgram.expected, expectedExamples[0]);
+  assert.deepEqual(firstProgram.syntax.map((part) => part.code), ["print", "()", '\"Hello, World!\"']);
+  assert.ok(first.exercises.every((exercise) => !exercise.starter.trim()), "Independent practice starts empty");
+  assert.equal(first.quiz.options[first.quiz.answer].text, firstProgram.expected);
+  assert.equal(beginnerPath.length, 12);
+  assert.ok(beginnerPath.every((entry) => !Object.hasOwn(entry, "id")), "Proposed topics must not become completion IDs");
 });

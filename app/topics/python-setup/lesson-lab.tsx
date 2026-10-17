@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from "re
 import ThemeToggle from "../../theme-toggle";
 import styles from "./lesson-lab.module.css";
 
+import { beginnerPath, firstProgram } from "./content/beginner-path";
 import { lessons as steps } from "./content/chapter-one";
 
 type WorkerStatus = "loading" | "ready" | "running" | "error";
@@ -25,9 +26,13 @@ export default function LessonLab() {
   const [pythonVersion, setPythonVersion] = useState("");
   const [quizPassed, setQuizPassed] = useState<Set<string>>(() => new Set());
   const [attemptedExercises, setAttemptedExercises] = useState<Set<string>>(() => new Set());
+  const [prediction, setPrediction] = useState("");
+  const [showExpected, setShowExpected] = useState(false);
+  const [observedFirstRun, setObservedFirstRun] = useState(false);
   const [editorTask, setEditorTask] = useState("Example");
   const workerRef = useRef<Worker | null>(null);
   const requestIdRef = useRef(0);
+  const runLessonIdRef = useRef("");
   const timeoutRef = useRef<number | null>(null);
   const editorRef = useRef<HTMLTextAreaElement>(null);
 
@@ -52,6 +57,7 @@ export default function LessonLab() {
         timeoutRef.current = null;
         if (data.id !== requestIdRef.current) return;
         setOutput(data.output || "(Program finished without producing output.)");
+        if (data.ok && runLessonIdRef.current === "why-python") setObservedFirstRun(true);
         setRunnerStatus("ready");
       } else {
         setOutput(data.message);
@@ -80,7 +86,7 @@ export default function LessonLab() {
   function completeAndContinue() {
     setCompleted((previous) => new Set(previous).add(activeStep.id));
     const nextStep = steps[steps.findIndex((step) => step.id === activeStep.id) + 1];
-    if (nextStep) selectStep(nextStep.id);
+    if (nextStep && activeStep.id !== "why-python") selectStep(nextStep.id);
   }
 
   function selectStep(stepId: string) {
@@ -112,6 +118,7 @@ export default function LessonLab() {
   function runCode() {
     if (runnerStatus !== "ready" || !workerRef.current || !activeCode.trim()) return;
     const id = ++requestIdRef.current;
+    runLessonIdRef.current = activeStep.id;
     setRunnerStatus("running");
     setOutput("Running your Python program…");
     workerRef.current.postMessage({ type: "run", id, code: activeCode });
@@ -189,7 +196,7 @@ export default function LessonLab() {
                   {completed.has(step.id) ? "✓" : String(index + 1).padStart(2, "0")}
                 </span>
                 <span className={styles.stepText}>
-                  <small>{step.kind}</small>
+                  <small>{index === 0 ? "Beginner · revised" : "Earlier edition"}</small>
                   <span>{step.title}</span>
                 </span>
               </button>
@@ -206,28 +213,63 @@ export default function LessonLab() {
       <section className={styles.workspace}>
         <header className={styles.lessonHeader}>
           <div>
-            <p className={styles.kicker}>{activeStep.kind.toUpperCase()} <span>·</span> {steps.findIndex((step) => step.id === activeStep.id) + 1} OF {steps.length}</p>
+            <p className={styles.kicker}>PYTHON FUNDAMENTALS <span>·</span> LESSON {String(steps.findIndex((step) => step.id === activeStep.id) + 1).padStart(2, "0")}</p>
+            {activeStep.id === "why-python" ? <span className={styles.levelBadge}>Beginner</span> : null}
             <h1>{activeStep.title}</h1>
           </div>
           <div className={styles.headerBadge}><span /> {runnerStatus === "ready" ? `Python ${pythonVersion} ready` : runnerStatus === "running" ? "Program running" : runnerStatus === "error" ? "Runtime error" : "Loading Python runtime"}</div>
         </header>
         <article className={styles.lessonContent} key={activeStep.id}>
           <p className={styles.lead}>{activeStep.explanation}</p>
-          <h2>Learning outcomes</h2>
-          <ul>{activeStep.outcomes.map((outcome) => <li key={outcome}>{outcome}</li>)}</ul>
-          <h2>Syntax in action</h2>
-          <pre><code>{activeStep.example}</code></pre>
-          <p>{activeStep.walkthrough}</p>
-          <div className={styles.callout}><strong>DevOps use case</strong><p>{activeStep.useCase}</p></div>
-          <h2>Practice independently</h2>
-          <p>Use “Load exercise” to replace the current editor text with a starter. Copy any work you want to keep first. Hints open one at a time. Compare your output yourself; practice checkboxes record your own review, not automatic grading. Progress lasts for this page session.</p>
+          {activeStep.id === "why-python" ? (
+            <>
+              <section className={styles.learningSection} aria-labelledby="what-python">
+                <h2 id="what-python">What is Python?</h2><p>{firstProgram.what}</p>
+                <h3>Why do we need it?</h3><p>{firstProgram.why}</p>
+              </section>
+              <section className={styles.learningSection} aria-labelledby="first-instruction">
+                <h2 id="first-instruction">Your first instruction</h2>
+                <pre><code>{activeStep.example}</code></pre><p>{activeStep.walkthrough}</p>
+                <h3>Understand the code</h3>
+                <ul>{firstProgram.syntax.map((part) => <li key={part.code}><code>{part.code}</code> — {part.meaning}</li>)}</ul>
+              </section>
+              <section className={styles.learningSection} aria-labelledby="predict-output">
+                <h2 id="predict-output">Predict the output</h2>
+                <p>Before running the instruction, what message do you think will appear? Will the quotes appear too?</p>
+                <label htmlFor="output-prediction">My prediction</label>
+                <input className={styles.predictionInput} id="output-prediction" value={prediction} onChange={(event) => setPrediction(event.target.value)} placeholder="Type what you expect to see" />
+                <button className={styles.primaryButton} type="button" onClick={() => setShowExpected(true)}>Compare with expected output</button>
+                {showExpected ? <div className={styles.expectedOutput}><p className={styles.kicker}>EXPECTED OUTPUT</p><pre>{firstProgram.expected}</pre><p>The message appears without the quotes. Compare it with your prediction.</p></div> : null}
+              </section>
+              <section className={styles.learningSection} aria-labelledby="run-observe">
+                <h2 id="run-observe">Run and observe</h2>
+                <p>The Python editor below contains the instruction. Press Run, then look at OUTPUT. Does the message match your prediction?</p>
+                <button className={styles.primaryButton} type="button" onClick={() => { editorRef.current?.focus(); editorRef.current?.scrollIntoView({ block: "center", behavior: "smooth" }); }}>Go to the editor</button>
+                {observedFirstRun ? <p role="status">Your program ran. Compare its message with what you expected, then try a message of your own.</p> : null}
+              </section>
+              <h2>Now it’s your turn</h2>
+              <p>Write a Python instruction to display your own message. Predict the output before running it. Try the everyday exercise first, then the small automation message.</p>
+              <p>“Start with an empty editor” replaces the current code. Copy any work you want to keep first. Open hints only when you need them; they do not open automatically.</p>
+            </>
+          ) : (
+            <>
+              <h2>Learning outcomes</h2>
+              <ul>{activeStep.outcomes.map((outcome) => <li key={outcome}>{outcome}</li>)}</ul>
+              <h2>Syntax in action</h2>
+              <pre><code>{activeStep.example}</code></pre>
+              <p>{activeStep.walkthrough}</p>
+              <div className={styles.callout}><strong>DevOps use case</strong><p>{activeStep.useCase}</p></div>
+              <h2>Practice independently</h2>
+              <p>Load an exercise to replace the current editor text. Copy any work you want to keep first. Open hints as needed, then compare your output yourself.</p>
+            </>
+          )}
           {activeStep.exercises.map((exercise, index) => {
             const exerciseId = `${activeStep.id}-${index}`;
             return (
               <section key={exerciseId} className={styles.callout} aria-label={exercise.title}>
                 <h3>{exercise.title}</h3>
                 <p>{exercise.prompt}</p>
-                <button type="button" className={styles.primaryButton} disabled={runnerStatus === "running"} onClick={() => loadExercise(index)}>Load exercise in editor</button>
+                <button type="button" className={styles.primaryButton} disabled={runnerStatus === "running"} onClick={() => loadExercise(index)}>{activeStep.id === "why-python" ? "Start with an empty editor" : "Load exercise in editor"}</button>
                 <details><summary>Hint 1: getting started</summary><p>{exercise.hints[0]}</p>
                   <details><summary>Hint 2: next step</summary><p>{exercise.hints[1]}</p>
                     {exercise.hints[2] ? <details><summary>Hint 3: bring it together</summary><p>{exercise.hints[2]}</p></details> : null}
@@ -244,7 +286,8 @@ export default function LessonLab() {
               </section>
             );
           })}
-          <h2>Knowledge check</h2>
+          {activeStep.id === "why-python" ? <section className={styles.learningSection}><h2>If something goes wrong</h2><ul>{firstProgram.mistakes.map((mistake) => <li key={mistake}>{mistake}</li>)}</ul><p>After fixing one thing, run the instruction again. A mistake is useful feedback while you learn.</p></section> : null}
+          <h2>Quick quiz</h2>
           <fieldset className={styles.quizOptions}>
             <legend>{activeStep.quiz.question}</legend>
             {activeStep.quiz.options.map((option, index) => (
@@ -256,10 +299,18 @@ export default function LessonLab() {
           </fieldset>
           <button className={styles.primaryButton} type="button" disabled={quizChoice === null} onClick={submitQuiz}>Check answer</button>
           {quizMessage ? <p className={styles.quizFeedback} role="status">{quizMessage}</p> : null}
+          {activeStep.id === "why-python" ? <section className={styles.learningSection}><h2>What you learned</h2><p>{firstProgram.recap}</p><ul>{activeStep.outcomes.map((outcome) => <li key={outcome}>{outcome}</li>)}</ul></section> : null}
+          <p>Practice reviews are your own confirmation, not automatic grading. Progress lasts for this page session.</p>
           <p>Complete both practice reviews and pass this lesson’s quiz to mark it complete.</p>
-          <button className={styles.primaryButton} type="button" disabled={runnerStatus === "running" || !quizPassed.has(activeStep.id) || !activeStep.exercises.every((_, index) => attemptedExercises.has(`${activeStep.id}-${index}`))} onClick={completeAndContinue}>
-            {completed.has(activeStep.id) ? "Lesson complete — continue →" : "Mark lesson complete →"}
+          <button className={styles.primaryButton} type="button" disabled={runnerStatus === "running" || (!completed.has(activeStep.id) && (!quizPassed.has(activeStep.id) || !activeStep.exercises.every((_, index) => attemptedExercises.has(`${activeStep.id}-${index}`))))} onClick={completeAndContinue}>
+            {completed.has(activeStep.id) ? "Lesson complete ✓" : "Mark lesson complete"}
           </button>
+          {activeStep.id === "why-python" ? <section className={styles.learningSection}>
+            <h2>Your proposed beginner path</h2>
+            <p>Lesson 1 is ready in this revised format. Lessons 2–12 below are the proposed next steps. The other lessons currently in the sidebar are from the earlier edition and remain available with their existing completion records.</p>
+            <ol className={styles.curriculumPath}>{beginnerPath.map((lesson, index) => <li key={lesson.topic}><strong>{String(index + 1).padStart(2, "0")} · {lesson.topic}</strong><p>{lesson.focus}</p></li>)}</ol>
+            <p>After fundamentals: modules, virtual environments, files, JSON, APIs, testing, and DevOps automation. Each stage will build on what you can already write independently.</p>
+          </section> : null}
           {completed.size === steps.length ? <p className={styles.finishNote}>Chapter 1 complete. Revisit any lesson to practice again.</p> : null}
         </article>
 
