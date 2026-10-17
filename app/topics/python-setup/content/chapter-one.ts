@@ -1,8 +1,16 @@
-// Chapter 1 only. Examples and exercise starters run without shell or network access.
-export type Exercise = { title: string; prompt: string; starter: string; hints: string[]; expected: string };
+// Chapter 1: each lesson introduces one main idea, then builds on earlier lessons.
+export type Exercise = {
+  title: string; prompt: string; starter: string; hints: string[]; expected: string; stdin?: string;
+};
+export type Teaching = {
+  what: string; why: string; syntax: { code: string; meaning: string }[];
+  expected: string; prediction: string; mistakes: string[]; recap: string;
+  extras?: { title: string; explanation: string; code: string; expected: string }[];
+};
 export type Lesson = {
   id: string; kind: "lesson"; title: string; explanation: string; example: string;
   walkthrough: string; useCase: string; outcomes: string[]; exercises: Exercise[];
+  stdin?: string; teaching?: Teaching;
   quiz: { question: string; options: { text: string; explanation: string }[]; answer: number };
 };
 export const lessons: Lesson[] = [
@@ -58,385 +66,976 @@ export const lessons: Lesson[] = [
         }
       ],
       "answer": 0
+    },
+    "teaching": {
+      "what": "Python is a programming language. We use it to give instructions to a computer.",
+      "why": "A computer needs instructions to know what to do. Displaying a message is a simple way to see that it followed your instruction.",
+      "syntax": [
+        {
+          "code": "print",
+          "meaning": "displays something on the screen. Write it in lowercase."
+        },
+        {
+          "code": "()",
+          "meaning": "holds the information passed to print. Use an opening and a closing parenthesis."
+        },
+        {
+          "code": "\"Hello, World!\"",
+          "meaning": "the text we want to display. The matching quotes mark its beginning and end."
+        }
+      ],
+      "expected": "Hello, World!",
+      "prediction": "What message will appear? Will the quotes appear too?",
+      "mistakes": [
+        "If you leave out a closing quote or parenthesis, Python cannot read the instruction. Compare it with the example, one character at a time.",
+        "Use straight quotes like the example. Curly quotation marks copied from a document do not work as Python text delimiters.",
+        "Use lowercase print. Print is a different name and will not display your message."
+      ],
+      "recap": "You gave Python one instruction and saw it display a message. You can now change that message yourself. Next, we will practise print more and introduce comments, one small step at a time."
     }
   },
   {
-    "id": "python-and-pip",
+    "id": "print-comments",
     "kind": "lesson",
-    "title": "Python, modules, and project environments",
-    "explanation": "An interpreter executes Python code. A module groups reusable code; import makes it available. The standard library ships with Python, while third-party packages are installed separately. On a local machine, a virtual environment isolates a project\u2019s installed packages. It is dependency isolation, not a security sandbox. This page already supplies a browser Python runtime and needs no local setup.",
-    "example": "import sys\nprint(sys.version)\nprint(\"Standard library available\")",
-    "walkthrough": "import sys makes the standard-library sys module available. The dot in sys.version accesses its version string. Local terminal workflow (macOS/Linux): python3 -m venv .venv, then source .venv/bin/activate, then python -m pip install requests. On Windows PowerShell, use py -m venv .venv and .venv\\Scripts\\Activate.ps1. These are shell commands, not Python: do not paste them into this editor. Record dependencies in requirements.txt or a project file, install them into a fresh environment to verify setup, and exclude .venv from Git. Version pins improve repeatability but do not by themselves guarantee identical builds.",
-    "useCase": "Two automation projects may need different HTTP client versions. Separate environments prevent their installed dependencies from interfering. The browser exercises use only the standard library; pip, cloud SDKs, and host shell access are outside this runner.",
+    "title": "Understanding print() and comments",
+    "explanation": "A comment is a note for a person reading a program. Python ignores the comment when it runs your instructions.",
+    "example": "# Say hello to a learner\nprint(\"Good morning!\")\nprint(\"Let us practise.\")",
+    "walkthrough": "Python skips the first line because it begins with #. It then displays the two messages in order. Each print instruction starts a new output line. Write each instruction on its own code line.",
+    "useCase": "A short comment can explain why an automation message is shown. A printed message is visible when the program runs; a comment stays in the code.",
     "outcomes": [
-      "Import a standard-library module.",
-      "Distinguish interpreter, module, and third-party package.",
-      "Describe local dependency isolation without running shell commands in Python."
+      "Explain the difference between a comment and output.",
+      "Write two print instructions on separate lines."
     ],
     "exercises": [
       {
-        "title": "Beginner practice",
-        "prompt": "Import sys and print sys.version.",
-        "starter": "# Import the module, then inspect its version.\n",
+        "title": "Everyday practice",
+        "prompt": "Write one comment describing your goal, then display two short messages on separate lines.",
         "hints": [
-          "Use the import keyword.",
-          "Access the version attribute with a dot."
+          "Begin the note with #; do not put the print instructions on that comment line.",
+          "Reuse the print instruction twice, with each instruction on its own line."
         ],
-        "expected": "A Python version string; the exact version depends on the runtime."
+        "expected": "Only your two messages appear; the comment does not.",
+        "starter": "\n",
+        "stdin": ""
       },
       {
-        "title": "Infrastructure practice",
-        "prompt": "Print a project setup checklist with three lines: create venv, record dependencies, verify fresh install. This is a checklist, not command execution.",
-        "starter": "# Print the three checklist items.\n",
+        "title": "Automation practice",
+        "prompt": "Add a comment explaining this is a rehearsal. Display Starting rehearsal and then Rehearsal complete.",
         "hints": [
-          "Use the print syntax from lesson 1.",
-          "Put each checklist item in quotes."
+          "Put the explanation after # on its own line.",
+          "Use one print instruction for each message."
         ],
-        "expected": "create venv\nrecord dependencies\nverify fresh install"
+        "expected": "Starting rehearsal\nRehearsal complete",
+        "starter": "\n",
+        "stdin": ""
       }
     ],
     "quiz": {
-      "question": "Where should a regular project install third-party dependencies?",
+      "question": "Which line is ignored when the program runs?",
       "options": [
         {
-          "text": "Into system Python for all projects",
-          "explanation": "This can cause conflicts with system tools and other projects."
+          "text": "# Explain this step",
+          "explanation": "Yes. # begins a comment outside quoted text."
         },
         {
-          "text": "Into its virtual environment, with dependencies recorded",
-          "explanation": "Correct: isolation avoids cross-project conflicts and recording dependencies supports repeatable setup."
+          "text": "print(\"Hello\")",
+          "explanation": "This displays a message; it is an instruction."
         },
         {
-          "text": "Inside this browser editor using shell commands",
-          "explanation": "This editor executes Python, not shell commands."
+          "text": "print(\"# Hello\")",
+          "explanation": "The # is inside quotes, so it is displayed as text."
         }
       ],
-      "answer": 1
+      "answer": 0
+    },
+    "stdin": "",
+    "teaching": {
+      "what": "A comment is a note for a person reading a program. Python ignores the comment when it runs your instructions.",
+      "why": "Notes help you remember why an instruction is there. We will use comments to explain a small program without changing its output.",
+      "syntax": [
+        {
+          "code": "#",
+          "meaning": "starts a comment that continues to the end of that line."
+        },
+        {
+          "code": "print(\"Good morning!\")",
+          "meaning": "uses the same message instruction from Lesson 1. The next print instruction displays the next line."
+        }
+      ],
+      "expected": "Good morning!\nLet us practise.",
+      "prediction": "How many output lines will appear? Will the comment appear?",
+      "mistakes": [
+        "Text after # outside quotes is a comment, so print(\"Hi\") placed after # on the same line will not run.",
+        "A # inside quotes is part of your message: print(\"Task #1\") displays Task #1."
+      ],
+      "recap": "You can explain an instruction with a comment and display two messages in order. Next, we will give information a name.",
+      "extras": []
     }
   },
   {
     "id": "python-basics",
     "kind": "lesson",
-    "title": "Variables, types, and calculations",
-    "explanation": "Variables give names to values so a program can compute results from inputs. Assignment uses =; Python evaluates the right side first. Strings represent text, integers whole numbers, floats decimal approximations, and booleans True or False. Names are case-sensitive. A value\u2019s type determines which operations make sense.",
-    "example": "service = \"api\"\nreplicas = 3\ncpu_per_replica = 0.5\ntotal_cpu = replicas * cpu_per_replica\nenabled = True\nprint(f\"{service}: {total_cpu} CPU; enabled={enabled}\")",
-    "walkthrough": "The assignments bind names to values. * multiplies the numeric inputs. The f before the string lets {expressions} insert values into the text. + adds numbers but joins strings; \"3\" + \"2\" is \"32\". int(\"3\") converts numeric text to an integer. Invalid conversions raise ValueError. / performs division; // gives floor division. Use == later to compare values, rather than assigning them.",
-    "useCase": "Calculate a deployment\u2019s requested CPU from its replica count. This is arithmetic on supplied data, not a measurement of live resource usage.",
+    "title": "Variables and storing information",
+    "explanation": "A variable is a name you use to refer to a value. You can store information under a name and use that name later.",
+    "example": "name = \"Maya\"\nprint(name)\nname = \"Ravi\"\nprint(name)",
+    "walkthrough": "The first line assigns the text Maya to name. print(name) looks up its current value. The third line assigns a new value to the same name. The earlier output stays Maya; the second output becomes Ravi.",
+    "useCase": "Store the name of the service your program describes. Changing a variable here does not change a real service.",
     "outcomes": [
-      "Assign values and identify str, int, float, and bool.",
-      "Calculate a result and display it with an f-string.",
-      "Convert numeric text explicitly."
+      "Assign a value and use the variable in print.",
+      "Trace how reassignment changes later output."
     ],
     "exercises": [
       {
-        "title": "Beginner practice",
-        "prompt": "Set price to 12 and quantity to 3; calculate and print their product.",
-        "starter": "# Define price and quantity, then calculate total.\n",
+        "title": "Everyday practice",
+        "prompt": "Store your favorite food in favorite_food and display it. Assign a different food to the same name and display it again.",
         "hints": [
-          "Use numeric values without quotes.",
-          "Multiply with * and print the result."
+          "Use = with the text in quotes on the right.",
+          "Print the variable without quoting its name, both before and after the change."
         ],
-        "expected": "36"
+        "expected": "Your first food, then your second food on a new line.",
+        "starter": "\n",
+        "stdin": ""
       },
       {
-        "title": "Infrastructure practice",
-        "prompt": "A service has 4 replicas with 256 MiB each. Calculate total_mib and print api requests 1024 MiB using an f-string.",
-        "starter": "replicas = 4\nmib_per_replica = 256\n# Calculate and print the total.\n",
+        "title": "Automation practice",
+        "prompt": "Store api in service_name and display it. Reassign service_name to worker and display it again.",
         "hints": [
-          "Multiply the two inputs.",
-          "Place total_mib inside braces in a string prefixed with f."
+          "A service name is just quoted text in this exercise.",
+          "Use the same variable name for both assignments."
         ],
-        "expected": "api requests 1024 MiB"
+        "expected": "api\nworker",
+        "starter": "\n",
+        "stdin": ""
       }
     ],
     "quiz": {
-      "question": "What is the value of int(\"3\") + 2?",
+      "question": "After city = \"Pune\", what does print(\"city\") display?",
       "options": [
         {
-          "text": "32",
-          "explanation": "String concatenation would require two strings; int converts the text."
+          "text": "Pune",
+          "explanation": "That would be the output of print(city), without quotes around the name."
         },
         {
-          "text": "5",
-          "explanation": "Correct: int(\"3\") produces the integer 3, then numeric addition gives 5."
+          "text": "city",
+          "explanation": "Yes. Quotes make this literal text instead of a variable lookup."
         },
         {
-          "text": "A syntax error",
-          "explanation": "This is valid Python with a valid conversion."
+          "text": "Nothing",
+          "explanation": "print displays the quoted text."
         }
       ],
       "answer": 1
+    },
+    "stdin": "",
+    "teaching": {
+      "what": "A variable is a name you use to refer to a value. You can store information under a name and use that name later.",
+      "why": "If a message needs someone’s name more than once, store the name once rather than typing it into every instruction.",
+      "syntax": [
+        {
+          "code": "name",
+          "meaning": "is a variable name you choose. Use letters, digits, and underscores; do not start with a digit. Use descriptive names."
+        },
+        {
+          "code": "=",
+          "meaning": "assigns the value on its right to the name on its left."
+        },
+        {
+          "code": "print(name)",
+          "meaning": "looks up a name. print(\"name\") would display the word name instead."
+        }
+      ],
+      "expected": "Maya\nRavi",
+      "prediction": "Does changing name change the message that was already printed?",
+      "mistakes": [
+        "Define a name before using it. Otherwise Python reports that the name is not defined.",
+        "Names are case-sensitive: name and Name are different. Avoid spaces and names such as print that Python already uses."
+      ],
+      "recap": "You can store information, use it by name, and assign a new value. Next, we will distinguish different kinds of values.",
+      "extras": []
+    }
+  },
+  {
+    "id": "value-types",
+    "kind": "lesson",
+    "title": "Strings, numbers, and booleans",
+    "explanation": "A value has a type: the kind of information it represents. Text, numbers, and yes/no information serve different purposes.",
+    "example": "name = \"Maya\"\nage = 25\nheight = 1.7\nis_learning = True\nprint(name)\nprint(age)\nprint(height)\nprint(is_learning)",
+    "walkthrough": "Quoted text is called a string (str). A whole number is an integer (int). A number written with a decimal point is a float. True and False are booleans (bool): they represent two possible states. These names describe types; you do not need to declare a type when assigning a value.",
+    "useCase": "A configuration may describe service_name as text, replicas as an integer, cpu as a decimal, and enabled as a boolean. These are supplied values, not live measurements.",
+    "outcomes": [
+      "Recognize str, int, float, and bool values.",
+      "Choose types for names, counts, measurements, and flags."
+    ],
+    "exercises": [
+      {
+        "title": "Everyday practice",
+        "prompt": "Store a book title, its page count, a decimal rating, and whether you finished it. Display each value.",
+        "hints": [
+          "Use quotes for the title, numeric values for count and rating, and True or False for the flag.",
+          "Print each variable on its own line."
+        ],
+        "expected": "Four lines showing your chosen title, count, rating, and boolean.",
+        "starter": "\n",
+        "stdin": ""
+      },
+      {
+        "title": "Automation practice",
+        "prompt": "Store service_name as api, replicas as 3, cpu as 0.5, and enabled as True. Display them on separate lines.",
+        "hints": [
+          "Only api needs quotes.",
+          "Use True with a capital T and no quotes."
+        ],
+        "expected": "api\n3\n0.5\nTrue",
+        "starter": "\n",
+        "stdin": ""
+      }
+    ],
+    "quiz": {
+      "question": "Which value is a boolean?",
+      "options": [
+        {
+          "text": "\"False\"",
+          "explanation": "The quotes make this a string."
+        },
+        {
+          "text": "False",
+          "explanation": "Yes. False is a boolean written without quotes."
+        },
+        {
+          "text": "0.5",
+          "explanation": "This is a float, not a boolean."
+        }
+      ],
+      "answer": 1
+    },
+    "stdin": "",
+    "teaching": {
+      "what": "A value has a type: the kind of information it represents. Text, numbers, and yes/no information serve different purposes.",
+      "why": "Choosing the right kind of value helps you describe information accurately. A person’s name is text; an item count is a number.",
+      "syntax": [
+        {
+          "code": "\"Maya\"",
+          "meaning": "is a string: text enclosed in matching quotes."
+        },
+        {
+          "code": "25",
+          "meaning": "is an integer: a whole number without quotes."
+        },
+        {
+          "code": "1.7",
+          "meaning": "is a float: a decimal number without quotes. Floats are approximations, not exact for every decimal."
+        },
+        {
+          "code": "True",
+          "meaning": "is a boolean. True and False begin with capital letters and have no quotes."
+        }
+      ],
+      "expected": "Maya\n25\n1.7\nTrue",
+      "prediction": "Which values are text? Will True appear with quotation marks?",
+      "mistakes": [
+        "\"25\" is text; 25 is a number. Similar-looking output does not mean the values have the same type.",
+        "\"False\" is text, not the boolean False. Lowercase true is not Python’s True."
+      ],
+      "recap": "You can choose text, whole numbers, decimal numbers, and booleans for different information. Next, we will calculate with numbers.",
+      "extras": []
+    }
+  },
+  {
+    "id": "operators",
+    "kind": "lesson",
+    "title": "Basic operators and calculations",
+    "explanation": "An operator is a symbol that performs an operation. Arithmetic operators let Python calculate with numbers.",
+    "example": "price = 12\nquantity = 3\ntotal = price * quantity\nprint(total)\nprint(total + 4)",
+    "walkthrough": "* multiplies, so total becomes 36. + adds, so the second result is 40. Python calculates the right side before assigning it. - subtracts and / divides: 7 / 2 gives 3.5. Parentheses group a calculation: (2 + 3) * 4 gives 20, while 2 + 3 * 4 gives 14 because multiplication happens before addition.",
+    "useCase": "Multiply a replica count by requested memory per replica to estimate total requested memory. This is a calculation on supplied configuration.",
+    "outcomes": [
+      "Use addition, subtraction, multiplication, and division.",
+      "Store a calculated result and predict grouped arithmetic."
+    ],
+    "exercises": [
+      {
+        "title": "Everyday practice",
+        "prompt": "A notebook costs 8 and you buy 4. Store the inputs, calculate the cost, and print it. Then print the cost with a delivery fee of 3.",
+        "hints": [
+          "Multiply the two inputs with *.",
+          "Add 3 to your calculated total for the second print."
+        ],
+        "expected": "32\n35",
+        "starter": "\n",
+        "stdin": ""
+      },
+      {
+        "title": "Automation practice",
+        "prompt": "A service has 4 replicas requesting 256 MiB each. Calculate total_mib and display the total.",
+        "hints": [
+          "Store both inputs as integers.",
+          "Multiply replicas by the amount per replica."
+        ],
+        "expected": "1024",
+        "starter": "\n",
+        "stdin": ""
+      }
+    ],
+    "quiz": {
+      "question": "What is (2 + 3) * 4?",
+      "options": [
+        {
+          "text": "14",
+          "explanation": "That is the result without the grouping parentheses."
+        },
+        {
+          "text": "20",
+          "explanation": "Yes. The grouped addition gives 5, then multiplication gives 20."
+        },
+        {
+          "text": "24",
+          "explanation": "First calculate the expression inside the parentheses."
+        }
+      ],
+      "answer": 1
+    },
+    "stdin": "",
+    "teaching": {
+      "what": "An operator is a symbol that performs an operation. Arithmetic operators let Python calculate with numbers.",
+      "why": "Calculating from stored values lets you change the inputs without manually working out the answer again.",
+      "syntax": [
+        {
+          "code": "*",
+          "meaning": "multiplies two numbers."
+        },
+        {
+          "code": "+",
+          "meaning": "adds two numbers; it can also join two strings."
+        },
+        {
+          "code": "-",
+          "meaning": "subtracts the right number from the left."
+        },
+        {
+          "code": "/",
+          "meaning": "divides; the result is a float. Dividing by zero fails."
+        },
+        {
+          "code": "(2 + 3) * 4",
+          "meaning": "does the grouped addition before multiplication."
+        }
+      ],
+      "expected": "36\n40",
+      "prediction": "Does total change when we print total + 4, without assigning it?",
+      "mistakes": [
+        "\"3\" + \"2\" joins strings into \"32\". Use numbers without quotes for numeric arithmetic.",
+        "Writing a calculation without storing or printing it will not show a result in a script.",
+        "A calculation does not automatically update its inputs: total + 4 leaves total unchanged."
+      ],
+      "recap": "You can calculate a result from inputs and explain the order of operations. Next, we will ask the person running a program for an input.",
+      "extras": []
+    }
+  },
+  {
+    "id": "user-input",
+    "kind": "lesson",
+    "title": "Getting input and displaying output",
+    "explanation": "input() reads text supplied by the person running a program. You can store that text in a variable and use it in a response.",
+    "example": "name = input(\"Your name: \")\nprint(\"Hello, \" + name + \"!\")",
+    "walkthrough": "input displays the prompt in quotes and reads one line of text. = stores that text in name. + joins strings into one message. In this page, type answers into Program input before pressing Run, one answer per line. Python consumes them in order. An empty input box means no lines are supplied. If the program asks for more lines than supplied, it reports an end-of-input error instead of waiting.",
+    "useCase": "Ask which environment a report should describe. Reading its name does not connect to that environment or perform a deployment.",
+    "outcomes": [
+      "Use input to read text into a variable.",
+      "Join text and distinguish supplied input from output."
+    ],
+    "exercises": [
+      {
+        "title": "Everyday practice",
+        "prompt": "Ask for a favorite color and display I like COLOR, replacing COLOR with the supplied answer. Try blue first.",
+        "hints": [
+          "Store the result of input in a variable.",
+          "Join \"I like \" with the variable using +."
+        ],
+        "expected": "Your prompt followed by I like blue when blue is supplied.",
+        "starter": "\n",
+        "stdin": "blue"
+      },
+      {
+        "title": "Automation practice",
+        "prompt": "Ask for an environment name and display Selected environment: NAME. Try staging.",
+        "hints": [
+          "The supplied environment is text.",
+          "Join the label and the variable, including a space after the colon."
+        ],
+        "expected": "Your prompt followed by Selected environment: staging.",
+        "starter": "\n",
+        "stdin": "staging"
+      }
+    ],
+    "quiz": {
+      "question": "If a person supplies 3 to input(), what kind of value is returned?",
+      "options": [
+        {
+          "text": "An integer",
+          "explanation": "input returns text, even when that text contains digits."
+        },
+        {
+          "text": "A string",
+          "explanation": "Yes. Numeric conversion is a separate step."
+        },
+        {
+          "text": "A boolean",
+          "explanation": "The input text is not automatically converted to a boolean."
+        }
+      ],
+      "answer": 1
+    },
+    "stdin": "Maya",
+    "teaching": {
+      "what": "input() reads text supplied by the person running a program. You can store that text in a variable and use it in a response.",
+      "why": "A program can respond to different people without editing its source code for every run.",
+      "syntax": [
+        {
+          "code": "input(\"Your name: \")",
+          "meaning": "asks for one line of text; the quoted text is the prompt."
+        },
+        {
+          "code": "name = input(...)",
+          "meaning": "stores the supplied text under a variable name."
+        },
+        {
+          "code": "\"Hello, \" + name + \"!\"",
+          "meaning": "joins three strings. Spaces inside quotes appear in the message."
+        }
+      ],
+      "expected": "Your name: Hello, Maya!",
+      "prediction": "With Maya supplied as input, which text comes from the program and which from the person?",
+      "mistakes": [
+        "input always returns text, even if the person types digits. int(\"3\") converts numeric text to an integer; int(\"three\") fails. Keep this exercise to text; we will practise conversion errors in debugging.",
+        "The prompt may share an output line with the response. This runner does not echo supplied answers as typed terminal input.",
+        "Do not put quotes around your name in Program input unless you want those quotes to be part of the answer."
+      ],
+      "recap": "You can ask for a line of text and respond using it. Next, we will choose instructions based on a condition.",
+      "extras": []
+    }
+  },
+  {
+    "id": "decisions",
+    "kind": "lesson",
+    "title": "Making decisions with if",
+    "explanation": "An if statement runs an instruction only when a condition is true. An else block gives an alternative when it is false.",
+    "example": "age = 16\nif age >= 18:\n    print(\"Adult ticket\")\nelse:\n    print(\"Youth ticket\")",
+    "walkthrough": ">= compares two values and means greater than or equal to. The comparison gives True or False. if tests that result. A colon ends each block header; four spaces indent the instructions belonging to it. Here, the comparison is False, so only the else message is printed. == checks equality; != checks inequality; < and > compare size. = still means assignment, not comparison.",
+    "useCase": "Flag a supplied disk usage value when it reaches a threshold. This reports a number supplied to the program; it does not measure a real disk.",
+    "outcomes": [
+      "Write an if/else block with correct indentation.",
+      "Use comparisons to choose one output."
+    ],
+    "exercises": [
+      {
+        "title": "Everyday practice",
+        "prompt": "Set temperature to 30. Print Take water when it is at least 25; otherwise print Enjoy your walk. Try 20 too.",
+        "hints": [
+          "Use >= to compare temperature with 25.",
+          "Put each message inside its own indented block."
+        ],
+        "expected": "30: Take water. 20: Enjoy your walk.",
+        "starter": "\n",
+        "stdin": ""
+      },
+      {
+        "title": "Automation practice",
+        "prompt": "Set disk_usage to 85. Print CHECK when it is at least 80; otherwise print OK. Try 45 and 80 too.",
+        "hints": [
+          "Compare the supplied usage with the threshold.",
+          "The value 80 belongs in the CHECK branch because the threshold is inclusive."
+        ],
+        "expected": "85: CHECK. 45: OK. 80: CHECK.",
+        "starter": "\n",
+        "stdin": ""
+      }
+    ],
+    "quiz": {
+      "question": "Which operator checks whether two values are equal?",
+      "options": [
+        {
+          "text": "=",
+          "explanation": "This assigns a value to a name."
+        },
+        {
+          "text": "==",
+          "explanation": "Yes. This compares values and produces True or False."
+        },
+        {
+          "text": "+",
+          "explanation": "This adds numbers or joins strings."
+        }
+      ],
+      "answer": 1
+    },
+    "stdin": "",
+    "teaching": {
+      "what": "An if statement runs an instruction only when a condition is true. An else block gives an alternative when it is false.",
+      "why": "A program can respond differently to different information, rather than always following the same path.",
+      "syntax": [
+        {
+          "code": "if age >= 18:",
+          "meaning": "tests a condition. The colon starts an indented block."
+        },
+        {
+          "code": "    print(\"Adult ticket\")",
+          "meaning": "four leading spaces place this instruction inside the if block."
+        },
+        {
+          "code": "else:",
+          "meaning": "starts the alternative block, aligned with if."
+        },
+        {
+          "code": "==",
+          "meaning": "compares two values for equality; it does not assign a value."
+        }
+      ],
+      "expected": "Youth ticket",
+      "prediction": "Which one of the two messages appears? What changes if age is 18?",
+      "mistakes": [
+        "Keep instructions in the same block aligned. Missing indentation or a missing colon prevents Python from reading the block.",
+        "Use == for equality checks. A single = is for assignment.",
+        "Use the boolean False for a false flag. The nonempty string \"False\" is treated as true in an if test."
+      ],
+      "recap": "You can trace a condition and choose one of two blocks. Next, we will repeat instructions.",
+      "extras": []
+    }
+  },
+  {
+    "id": "conditions-loops",
+    "kind": "lesson",
+    "title": "Repeating instructions with loops",
+    "explanation": "A loop repeats a block of instructions. A for loop can visit each number produced by range().",
+    "example": "for number in range(1, 4):\n    print(number)\nprint(\"Done\")",
+    "walkthrough": "range(1, 4) produces 1, 2, and 3: the starting number is included and the stopping number is excluded. for assigns each number in turn to number. in connects that name to the sequence to visit. The colon begins the loop block. The indented print runs once per number. The final unindented print runs once after the loop.",
+    "useCase": "Print numbered rehearsal attempts or inspect a supplied collection. A loop does not itself add retries, delays, or real network checks.",
+    "outcomes": [
+      "Predict the numbers produced by range.",
+      "Distinguish repeated instructions from an after-loop summary."
+    ],
+    "exercises": [
+      {
+        "title": "Everyday practice",
+        "prompt": "Print the numbers 1 through 5, then print Finished once.",
+        "hints": [
+          "Choose a stopping value one greater than the final number you want.",
+          "Indent the number print, but leave the final message outside the loop."
+        ],
+        "expected": "1\n2\n3\n4\n5\nFinished",
+        "starter": "\n",
+        "stdin": ""
+      },
+      {
+        "title": "Automation practice",
+        "prompt": "Loop through attempt numbers 1 through 3. On each iteration print Attempt, then print its number on the next line. After the loop, print Rehearsal complete.",
+        "hints": [
+          "Use range with a starting value of 1.",
+          "Both print instructions for an attempt belong inside the loop."
+        ],
+        "expected": "Attempt\n1\nAttempt\n2\nAttempt\n3\nRehearsal complete",
+        "starter": "\n",
+        "stdin": ""
+      }
+    ],
+    "quiz": {
+      "question": "Which numbers does range(1, 3) produce?",
+      "options": [
+        {
+          "text": "1, 2, 3",
+          "explanation": "The stopping value is excluded."
+        },
+        {
+          "text": "1, 2",
+          "explanation": "Yes. Start at 1 and stop before 3."
+        },
+        {
+          "text": "0, 1, 2",
+          "explanation": "An explicit start of 1 excludes 0."
+        }
+      ],
+      "answer": 1
+    },
+    "stdin": "",
+    "teaching": {
+      "what": "A loop repeats a block of instructions. A for loop can visit each number produced by range().",
+      "why": "Repeating a rule saves you from writing nearly identical instructions many times.",
+      "syntax": [
+        {
+          "code": "range(1, 4)",
+          "meaning": "produces numbers starting at 1 and stopping before 4. The comma separates its two inputs."
+        },
+        {
+          "code": "for number in ...:",
+          "meaning": "gives each successive item the name number and repeats the indented block."
+        },
+        {
+          "code": "print(\"Done\")",
+          "meaning": "is outside the loop because it has no leading indentation."
+        }
+      ],
+      "expected": "1\n2\n3\nDone",
+      "prediction": "How many times does the indented print run? Does Done repeat?",
+      "mistakes": [
+        "The stopping number is excluded. range(1, 4) does not include 4.",
+        "Keep a final summary outside the loop if it should appear once.",
+        "Initialize a counter before a loop. Resetting it inside the loop loses the previous count."
+      ],
+      "recap": "You can repeat an action and trace each iteration. Next, we will group information into collections.",
+      "extras": []
     }
   },
   {
     "id": "collections",
     "kind": "lesson",
     "title": "Lists and dictionaries",
-    "explanation": "Lists store an ordered sequence; dictionaries map unique keys to values. These let you describe several resources and their settings without making a variable for every field. A list index starts at zero. A dictionary uses keys rather than numeric positions.",
-    "example": "services = [\"api\", \"worker\"]\nservices.append(\"database\")\nconfig = {\"environment\": \"staging\", \"replicas\": 2}\nconfig[\"replicas\"] = 3\nprint(services[0], len(services))\nprint(config[\"replicas\"])",
-    "walkthrough": "Square brackets construct a list or select an item. append adds to the end; len returns the item count. Braces with key: value pairs construct a dictionary. Assigning through a key updates that entry. services[0] is api; services[3] would raise IndexError here. A missing dictionary key raises KeyError; config.get(\"region\", \"unknown\") supplies a fallback when the key is absent.",
-    "useCase": "An inventory can be a list of service names, with dictionaries holding configuration. Updating this local dictionary does not change a real deployment.",
+    "explanation": "A collection groups related values. A list keeps items in order; a dictionary gives values descriptive keys. We will start with a list, then compare a small dictionary.",
+    "example": "foods = [\"rice\", \"soup\"]\nprint(foods[0])\nfoods.append(\"bread\")\nfor food in foods:\n    print(food)",
+    "walkthrough": "Square brackets around comma-separated values create a list. An index selects a position, counting from zero: foods[0] is rice. append adds one item to the end. The dot in foods.append accesses an operation belonging to this list. The for loop visits each stored value in order.",
+    "useCase": "A list can hold service names, while a dictionary holds a service’s settings. These structures describe local data; changing them does not update infrastructure.",
     "outcomes": [
-      "Access and extend a list.",
-      "Read and update dictionary fields.",
-      "Recognize missing indices and keys."
+      "Create a list, access an index, append an item, and iterate.",
+      "Read and update a small dictionary by key."
     ],
     "exercises": [
       {
-        "title": "Beginner practice",
-        "prompt": "Create a list of two favorite tools, append a third, and print its length.",
-        "starter": "# Create a list, append one item, and print the count.\n",
+        "title": "Everyday practice",
+        "prompt": "Create a list of two favorite activities, append a third, and print each activity with a loop.",
         "hints": [
-          "Use square brackets and quoted names.",
-          "Call your_list.append(...) before len(your_list)."
+          "Use square brackets for the list and append to add the third item.",
+          "Reuse for item in your_list: with an indented print."
         ],
-        "expected": "3"
+        "expected": "Your three activities in their stored order.",
+        "starter": "\n",
+        "stdin": ""
       },
       {
-        "title": "Infrastructure practice",
-        "prompt": "Update replicas to 4 and add region eu-west-1 to the configuration. Print both fields.",
-        "starter": "config = {\"service\": \"api\", \"replicas\": 2}\n# Update replicas and add region.\n",
+        "title": "Automation practice",
+        "prompt": "Create config with service set to api and replicas set to 2. Update replicas to 4, then print service and replicas on separate lines.",
         "hints": [
-          "Assign to config[\"replicas\"].",
-          "A new key can be assigned using the same syntax."
+          "Use a dictionary with quoted keys and key: value pairs.",
+          "Assign through config[\"replicas\"] before printing the fields."
         ],
-        "expected": "4 eu-west-1 (on one line, separated by a space)."
+        "expected": "api\n4",
+        "starter": "\n",
+        "stdin": ""
       }
     ],
     "quiz": {
-      "question": "For services = [\"api\", \"worker\"], what is services[1]?",
+      "question": "For tools = [\"pen\", \"ruler\"], what does tools[0] give?",
       "options": [
         {
-          "text": "api",
-          "explanation": "The first item is at index 0."
+          "text": "pen",
+          "explanation": "Yes. List indices start at zero."
         },
         {
-          "text": "worker",
-          "explanation": "Correct: index 1 selects the second item."
+          "text": "ruler",
+          "explanation": "This is the second item, at index 1."
         },
         {
-          "text": "IndexError",
-          "explanation": "Index 1 exists in a two-item list."
+          "text": "A missing-key error",
+          "explanation": "This is a valid list position, not a dictionary key."
         }
       ],
-      "answer": 1
-    }
-  },
-  {
-    "id": "conditions-loops",
-    "kind": "lesson",
-    "title": "Decisions and repetition",
-    "explanation": "An if statement chooses a block based on a condition. A for loop visits each item in a sequence. Together they let one rule process an inventory of any size. Use four spaces for each indentation level; the indentation defines which statements belong inside a block.",
-    "example": "services = [{\"name\": \"api\", \"healthy\": True}, {\"name\": \"worker\", \"healthy\": False}]\nhealthy_count = 0\nfor service in services:\n    if service[\"healthy\"]:\n        healthy_count += 1\n        print(service[\"name\"], \"OK\")\n    else:\n        print(service[\"name\"], \"CHECK\")\nprint(\"Healthy:\", healthy_count)",
-    "walkthrough": "A colon starts each for, if, and else block. The loop binds service to each dictionary in turn. True enters the if block; False enters else. += 1 increments the counter. The final unindented print runs after the loop, producing Healthy: 1. Comparisons include ==, !=, <, and >=; and/or combine conditions. Avoid treating the nonempty string \"False\" as a boolean: nonempty strings are truthy.",
-    "useCase": "Flag services from supplied health data, or compare disk usage with a threshold. A script should report simulated data clearly before it is connected to live checks.",
-    "outcomes": [
-      "Write an indented for/if block.",
-      "Compare numeric values and count matching items.",
-      "Explain the difference between False and \"False\"."
-    ],
-    "exercises": [
-      {
-        "title": "Beginner practice",
-        "prompt": "Loop over the numbers and print only numbers greater than or equal to 5.",
-        "starter": "numbers = [2, 5, 8]\n# Loop and filter.\n",
-        "hints": [
-          "Use for number in numbers: .",
-          "Inside the loop, test number >= 5 before printing."
-        ],
-        "expected": "5\n8"
-      },
-      {
-        "title": "Infrastructure practice",
-        "prompt": "Print each disk usage at or above 80, then print the number of alerts.",
-        "starter": "disk_usage = [45, 80, 92]\nalerts = 0\n# Check each usage and count alerts.\n",
-        "hints": [
-          "Initialize the counter before the loop (already supplied).",
-          "Increment only inside the matching branch; print the total after the loop."
-        ],
-        "expected": "80\n92\nAlerts: 2"
-      }
-    ],
-    "quiz": {
-      "question": "Where should a total be printed once after a loop?",
-      "options": [
+      "answer": 0
+    },
+    "stdin": "",
+    "teaching": {
+      "what": "A collection groups related values. A list keeps items in order; a dictionary gives values descriptive keys. We will start with a list, then compare a small dictionary.",
+      "why": "You can manage a group of names without inventing a separate variable name for every item.",
+      "syntax": [
         {
-          "text": "Inside the loop body",
-          "explanation": "That prints a running total on every iteration."
+          "code": "[\"rice\", \"soup\"]",
+          "meaning": "creates a list containing two strings."
         },
         {
-          "text": "At the indentation level of the for statement, after its body",
-          "explanation": "Correct: leaving the loop block executes the print once after iteration completes."
+          "code": "foods[0]",
+          "meaning": "selects the first item; index 1 selects the second."
         },
         {
-          "text": "Only in else under if",
-          "explanation": "That would print only for items taking that branch."
+          "code": "foods.append(\"bread\")",
+          "meaning": "adds bread after the existing items."
+        },
+        {
+          "code": "for food in foods:",
+          "meaning": "uses the loop you know to visit each item."
         }
       ],
-      "answer": 1
+      "expected": "rice\nrice\nsoup\nbread",
+      "prediction": "Why does rice appear twice? Which message comes before the loop?",
+      "mistakes": [
+        "The first index is 0. An index beyond the end of the list causes IndexError.",
+        "A dictionary key must exist before you read it with square brackets; a missing key causes KeyError.",
+        "Lists and dictionaries can be changed in place. Giving one list a second name does not copy it; references and mutability will get a dedicated deeper exercise later."
+      ],
+      "recap": "You can store ordered items and look up named fields. Next, we will give a reusable group of instructions a name.",
+      "extras": [
+        {
+          "title": "Next small step: named fields",
+          "explanation": "A dictionary groups values under keys. Curly braces create it; a colon joins each key to its value and commas separate entries. Use a quoted key in square brackets to read or update its value. len(...) returns a collection’s item count.",
+          "code": "person = {\"name\": \"Maya\", \"age\": 25}\nprint(person[\"name\"])\nperson[\"age\"] = 26\nprint(person[\"age\"])\nprint(len(person))",
+          "expected": "Maya\n26\n2"
+        }
+      ]
     }
   },
   {
     "id": "functions",
     "kind": "lesson",
-    "title": "Reusable functions and errors",
-    "explanation": "A function packages a named operation. Parameters receive input; return sends a result to the caller. Defining a function does not run its body: you must call it. Exceptions signal a failure; catch a specific expected exception when you can explain or recover from it.",
-    "example": "def total_cpu(replicas, cpu_each):\n    if replicas < 0:\n        raise ValueError(\"replicas must be nonnegative\")\n    return replicas * cpu_each\n\nprint(total_cpu(3, 0.5))\ntry:\n    print(total_cpu(-1, 0.5))\nexcept ValueError as error:\n    print(\"Invalid configuration:\", error)",
-    "walkthrough": "def names the function and declares two parameters. The indented body validates replicas before returning the product. Calling it with 3 and 0.5 prints 1.5. raise stops the invalid call and transfers control to the matching except block, which prints the message. return and print differ: print displays text; a function without an explicit return returns None. Avoid a bare except that hides unrelated programming errors.",
-    "useCase": "Reuse a resource calculation across services and report invalid configuration clearly. This function assumes numeric inputs and validates only nonnegative replicas; production validation would also constrain types and CPU values.",
+    "title": "Functions and reusable code",
+    "explanation": "A function is a named group of instructions. Defining it saves the instructions; calling it runs them.",
+    "example": "def greet():\n    print(\"Hello!\")\n\ngreet()\ngreet()",
+    "walkthrough": "def introduces a function definition. greet is the name we chose. Empty parentheses mean this function expects no input values. The colon begins its body, which is indented by four spaces. The definition alone prints nothing. Each later greet() call runs the body once.",
+    "useCase": "Name a repeatable reporting action. Later, keep calculations separate from display so you can check their results independently.",
     "outcomes": [
-      "Define and call a function with parameters.",
-      "Use a return value in another expression.",
-      "Raise and catch ValueError for a known invalid input."
+      "Define and call a no-input function.",
+      "Use a simple parameter and return value after understanding a basic call."
     ],
     "exercises": [
       {
-        "title": "Beginner practice",
-        "prompt": "Define double(number) that returns twice its input. Print double(6).",
-        "starter": "# Define the function, then call it.\n",
+        "title": "Everyday practice",
+        "prompt": "Define a function named show_goal that prints your learning goal. Call it twice.",
         "hints": [
-          "Place the calculation in an indented function body.",
-          "Use return rather than only printing inside the function."
+          "Begin with def and choose no inputs for this function.",
+          "The message is inside the indented body; both calls are outside it."
         ],
-        "expected": "12"
+        "expected": "Your goal appears twice, on separate lines.",
+        "starter": "\n",
+        "stdin": ""
       },
       {
-        "title": "Infrastructure practice",
-        "prompt": "Define validate_replicas(count): reject counts below 1 with ValueError; otherwise return count. Print the result for 3 and catch the error for 0.",
-        "starter": "# Define validation, then try valid and invalid calls.\n",
+        "title": "Automation practice",
+        "prompt": "Define total_memory(replicas, memory_each) that returns their product. Print the result of calling it with 3 and 256.",
         "hints": [
-          "Use if count < 1 inside the function.",
-          "Put the invalid call inside try; catch ValueError and print its message."
+          "The names between parentheses receive values from each call.",
+          "Use return for the calculation, then print the result of the call outside the function."
         ],
-        "expected": "3 followed by your validation error message."
+        "expected": "768",
+        "starter": "\n",
+        "stdin": ""
       }
     ],
     "quiz": {
-      "question": "What does a function return if it only calls print(\"OK\")?",
+      "question": "When does a function body run?",
       "options": [
         {
-          "text": "\"OK\"",
-          "explanation": "That text is displayed, but print does not make it the function\u2019s return value."
+          "text": "Whenever Python reads its definition",
+          "explanation": "A definition saves the body but does not execute it."
         },
         {
-          "text": "None",
-          "explanation": "Correct: without an explicit return value, the function returns None."
+          "text": "When the function is called",
+          "explanation": "Yes. A call uses the function name followed by parentheses."
         },
         {
-          "text": "True",
-          "explanation": "Successful execution does not automatically return True."
+          "text": "Only if its name is print",
+          "explanation": "You can call functions you define yourself."
         }
       ],
       "answer": 1
+    },
+    "stdin": "",
+    "teaching": {
+      "what": "A function is a named group of instructions. Defining it saves the instructions; calling it runs them.",
+      "why": "You can use the same action several times without copying its body. You have already called print; now you will define your own function.",
+      "syntax": [
+        {
+          "code": "def greet():",
+          "meaning": "defines a function called greet. def is a Python keyword."
+        },
+        {
+          "code": "    print(\"Hello!\")",
+          "meaning": "belongs to the function body because it is indented."
+        },
+        {
+          "code": "greet()",
+          "meaning": "calls the function. Parentheses after the name request execution."
+        }
+      ],
+      "expected": "Hello!\nHello!",
+      "prediction": "How many greetings appear? Does the definition itself display a greeting?",
+      "mistakes": [
+        "Calling greet without parentheses only refers to the function; it does not run it.",
+        "Define the function before the first call. Keep its body indented.",
+        "Displaying text and returning a value are different. return passes a value back to the caller; print only displays it."
+      ],
+      "recap": "You can define and call a small function, then give it input and use its result. Scope and different argument styles will be explored later with focused exercises.",
+      "extras": [
+        {
+          "title": "Next small step: inputs and a result",
+          "explanation": "A parameter names an input inside a function. An argument is the value supplied in a call. Here number receives 4. return sends a value back to the caller; it does not display it. The caller stores the returned value in answer, then prints it. Without an explicit return value, a function returns None, meaning no value was supplied.",
+          "code": "def double(number):\n    return number * 2\n\nanswer = double(4)\nprint(answer)",
+          "expected": "8"
+        }
+      ]
     }
   },
   {
-    "id": "devops-json",
+    "id": "errors-debugging",
     "kind": "lesson",
-    "title": "JSON configuration",
-    "explanation": "JSON is a text format used for API payloads and configuration. Python dictionaries are in-memory objects, not JSON text. The standard-library json module converts between them. Parse text before inspecting its fields; serialize an object when another tool needs JSON.",
-    "example": "import json\ntext = '{\"service\": \"api\", \"replicas\": 3, \"enabled\": true}'\nconfig = json.loads(text)\nprint(config[\"service\"], config[\"enabled\"])\nconfig[\"replicas\"] = 4\nprint(json.dumps(config, sort_keys=True))",
-    "walkthrough": "loads means load from a string; dumps serializes to a string. JSON requires double-quoted keys and strings. JSON true, false, and null become Python True, False, and None. The outer single quotes delimit the Python string in this example. Malformed text raises json.JSONDecodeError, which you can catch specifically. Valid JSON can also contain a list or scalar, so parsing alone does not validate your expected configuration schema.",
-    "useCase": "Read a saved deployment payload and produce updated JSON for review. Editing a payload in this editor does not send an API request or deploy anything.",
+    "title": "Errors and debugging",
+    "explanation": "Debugging means finding why a program does not behave as intended, changing one thing, and checking again.",
+    "example": "items = 3\nprice_each = 4\ntotal = items * price_each\nprint(total)",
+    "walkthrough": "This corrected program prints 12. If you expected 12 but wrote items + price_each, it would run and print 7: that is a logic mistake. First write down your expected result, inspect the inputs and operation, change one thing, and run again. For reported errors, read the final error line and the referenced source line. SyntaxError means Python could not read the code; NameError means a name was not defined; ValueError often means a conversion received unsuitable text.",
+    "useCase": "Validate text intended to be a replica count before relying on it. Reporting a bad value is safer than silently choosing a count.",
     "outcomes": [
-      "Parse and serialize JSON with the standard library.",
-      "Distinguish JSON booleans from Python booleans.",
-      "Separate parsing from field validation."
+      "Distinguish syntax, runtime, and logic mistakes.",
+      "Repair a small calculation and catch a specific conversion error."
     ],
     "exercises": [
       {
-        "title": "Beginner practice",
-        "prompt": "Parse the JSON and print the name field.",
-        "starter": "import json\ntext = '{\"name\": \"Sam\", \"learning\": true}'\n# Parse text and print name.\n",
+        "title": "Everyday practice",
+        "prompt": "This program should print the cost of three tickets at 5 each. Predict the right answer, run it, find the mistake, and repair it.",
         "hints": [
-          "Use json.loads(text).",
-          "The parsed dictionary can be indexed with \"name\"."
+          "The program runs, so inspect the calculation rather than looking for missing punctuation.",
+          "Which operator means three groups of five?"
         ],
-        "expected": "Sam"
+        "expected": "15",
+        "starter": "tickets = 3\nprice = 5\nprint(tickets + price)\n",
+        "stdin": ""
       },
       {
-        "title": "Infrastructure practice",
-        "prompt": "Parse the deployment, change replicas to 5, and print JSON with sorted keys.",
-        "starter": "import json\ntext = '{\"service\": \"worker\", \"replicas\": 2}'\n# Parse, update, serialize.\n",
+        "title": "Automation practice",
+        "prompt": "Convert replica_text to an integer and print it. If conversion fails, catch ValueError and print Invalid replica count. Test with \"3\" and then \"three\".",
         "hints": [
-          "Reuse dictionary assignment from lesson 4.",
-          "Pass the updated dictionary to json.dumps(..., sort_keys=True)."
+          "Put the conversion inside a try block.",
+          "Catch ValueError in an except block, using the indentation shown in the example below."
         ],
-        "expected": "{\"replicas\": 5, \"service\": \"worker\"}"
+        "expected": "For \"3\": 3. For \"three\": Invalid replica count.",
+        "starter": "replica_text = \"three\"\n",
+        "stdin": ""
       }
     ],
     "quiz": {
-      "question": "After json.loads('{\"enabled\": false}'), what is the enabled value?",
+      "question": "A program runs but prints 7 when the required result is 12. What should you do?",
       "options": [
         {
-          "text": "\"false\"",
-          "explanation": "The JSON boolean is not a quoted string."
+          "text": "Assume it is correct because it ran",
+          "explanation": "Execution success does not prove the program meets its requirements."
         },
         {
-          "text": "False",
-          "explanation": "Correct: the JSON boolean false maps to Python False."
+          "text": "Compare the inputs and calculation with the expected result",
+          "explanation": "Yes. A logic mistake may produce no Python error at all."
         },
         {
-          "text": "A parsing error",
-          "explanation": "Lowercase false is valid JSON."
+          "text": "Ignore the result",
+          "explanation": "The output is evidence you need when checking the program."
         }
       ],
       "answer": 1
+    },
+    "stdin": "",
+    "teaching": {
+      "what": "Debugging means finding why a program does not behave as intended, changing one thing, and checking again.",
+      "why": "Errors provide clues. A program can fail to run, fail while running, or run successfully but produce the wrong result.",
+      "syntax": [
+        {
+          "code": "items * price_each",
+          "meaning": "multiplies the count by the price, rather than adding them."
+        },
+        {
+          "code": "int(\"3\")",
+          "meaning": "converts numeric text to an integer. int(\"three\") raises ValueError instead of guessing."
+        }
+      ],
+      "expected": "12",
+      "prediction": "If * were replaced by +, would Python report an error or print an incorrect total?",
+      "mistakes": [
+        "A successful run is not proof that the result is correct. Compare with a result you worked out yourself.",
+        "Read the error before changing several lines. Check spelling, quotes, indentation, and values.",
+        "Catch only an error you can handle; hiding all errors can make a broken program look successful."
+      ],
+      "recap": "You can compare expected and actual behavior, read a useful error clue, and test a repair. You can handle one known conversion failure without hiding unrelated errors.",
+      "extras": [
+        {
+          "title": "Handle one expected conversion error",
+          "explanation": "An exception is Python’s signal that an operation failed while running. try starts a block where a known operation may fail. except ValueError runs only when that type of failure occurs. Both headers need colons and indented bodies. If conversion succeeds, the except block is skipped. This example deliberately uses unsuitable numeric text.",
+          "code": "text = \"three\"\ntry:\n    count = int(text)\n    print(count)\nexcept ValueError:\n    print(\"Please use digits\")",
+          "expected": "Please use digits"
+        }
+      ]
     }
   },
   {
     "id": "service-summary",
     "kind": "lesson",
-    "title": "Chapter practice: service summary",
-    "explanation": "Combine the chapter\u2019s skills by breaking a problem into input, processing, and output. First inspect the supplied data, then decide what should be counted, then format a report. Test a mixed inventory, an empty list, and an all-unhealthy inventory. A successful run proves the syntax executed; compare output with the requirements to check correctness.",
-    "example": "def count_healthy(services):\n    count = 0\n    for service in services:\n        if service[\"healthy\"]:\n            count += 1\n    return count\n\nservices = [{\"name\": \"api\", \"healthy\": True}, {\"name\": \"worker\", \"healthy\": False}]\nprint(f\"{count_healthy(services)}/{len(services)} services healthy\")",
-    "walkthrough": "The function accepts a list of dictionaries, increments only for healthy entries, and returns a number. len gives the total independently. The final f-string produces 1/2 services healthy. Empty input returns zero, so reporting 0/0 is safe here because there is no division. This example assumes every record has a name and a boolean healthy field.",
-    "useCase": "A fleet report can make unhealthy services visible to an operator. Work from this fixed snapshot before adding network access in a future chapter. No subsequent chapter is included here.",
+    "title": "Your first mini-project",
+    "explanation": "A mini-project combines familiar steps to solve a small problem. Start with a plan in plain language before writing the code.",
+    "example": "tasks = [True, False, True]\nfinished = 0\nfor done in tasks:\n    if done:\n        finished = finished + 1\nprint(finished)\nprint(len(tasks))",
+    "walkthrough": "This everyday model counts completed tasks. Each boolean describes whether one task is finished. The counter starts at zero before the loop and grows only when done is True. len(tasks) gives the total. For your own project, plan first, write one small piece, run it, then extend it. Reuse the same counting idea for a supplied service inventory.",
+    "useCase": "Summarize supplied service health records. Your report should make an unhealthy record visible and include totals, without using network access or changing infrastructure.",
     "outcomes": [
-      "Translate requirements into a small algorithm.",
-      "Combine collections, loops, functions, and formatted output.",
-      "Check results for mixed and empty inventories."
+      "Break a reporting problem into input, processing, and output.",
+      "Write a function that reports supplied service data.",
+      "Check mixed, empty, and all-unhealthy inputs."
     ],
     "exercises": [
       {
-        "title": "Beginner practice",
-        "prompt": "Write count_passes(scores), returning how many scores are at least 50. Print its result for [40, 50, 90] and for [].",
-        "starter": "scores = [40, 50, 90]\n# Define count_passes and test both lists.\n",
+        "title": "Everyday practice",
+        "prompt": "Create your own list of finished-task booleans. Write a function that prints the finished count and total on separate lines. Test it with [True, False], [], and [False, False].",
         "hints": [
-          "Start a counter at zero inside the function.",
-          "Increment for score >= 50; return after the loop."
+          "Pass the list into your function rather than relying on a variable outside it.",
+          "Initialize the counter in the function before the loop; print totals after the loop."
         ],
-        "expected": "2\n0"
+        "expected": "For the three calls: 1 then 2; 0 then 0; 0 then 2, each number on its own line.",
+        "starter": "\n",
+        "stdin": ""
       },
       {
-        "title": "Infrastructure practice",
-        "prompt": "From this JSON snapshot, print name: OK or name: CHECK for every service, then N/T services healthy. Put counting/reporting in a function and test an empty list too.",
-        "starter": "import json\ntext = '[{\"name\": \"api\", \"healthy\": true}, {\"name\": \"worker\", \"healthy\": false}, {\"name\": \"db\", \"healthy\": true}]'\n# Parse the snapshot, define a reporting function, and call it.\n",
+        "title": "Automation mini-project",
+        "prompt": "Plan and write report_services(services). For each supplied dictionary, display its name, then OK or CHECK on the next line. After all records, display Healthy: followed by the healthy count on a new line, then Total: followed by the total on a new line. Test the supplied snapshot, an empty list, and a list with one unhealthy service.",
         "hints": [
-          "Parse into a list; loop over each dictionary inside a function.",
-          "Use an if/else for labels and increment only when healthy.",
-          "After the loop, format the count and len(services); call again with []."
+          "Loop over the dictionaries inside your function. Read each name and healthy field, then use if/else for the label.",
+          "Count healthy records inside the matching branch. Print the two totals after the loop using len for the total. Do not divide."
         ],
-        "expected": "api: OK\nworker: CHECK\ndb: OK\n2/3 services healthy\n0/0 services healthy"
+        "expected": "Supplied snapshot:\napi\nOK\nworker\nCHECK\nHealthy:\n1\nTotal:\n2\n\nEmpty: Healthy: then 0, Total: then 0. One unhealthy record: its name and CHECK, then healthy count 0 and total 1.",
+        "starter": "services = [\n    {\"name\": \"api\", \"healthy\": True},\n    {\"name\": \"worker\", \"healthy\": False},\n]\n\n",
+        "stdin": ""
       }
     ],
     "quiz": {
-      "question": "Why test the reporting function with an empty list?",
+      "question": "Which test set gives useful confidence in a service summary?",
       "options": [
         {
-          "text": "It verifies the zero-item case and counter initialization",
-          "explanation": "Correct: the loop runs zero times, so the initial counter and final report still need to work."
+          "text": "Only one healthy service",
+          "explanation": "This does not check empty input or the unhealthy branch."
         },
         {
-          "text": "Empty lists always cause Python exceptions",
-          "explanation": "Iteration over an empty list is valid and performs zero iterations."
+          "text": "Mixed health, empty input, and all unhealthy",
+          "explanation": "Yes. These test both decision branches and the zero-iteration case."
         },
         {
-          "text": "It proves live servers are healthy",
-          "explanation": "These tests use supplied data; they do not observe live servers."
+          "text": "No tests if the program ran once",
+          "explanation": "One successful run does not establish correctness for different inputs."
         }
       ],
-      "answer": 0
+      "answer": 1
+    },
+    "stdin": "",
+    "teaching": {
+      "what": "A mini-project combines familiar steps to solve a small problem. Start with a plan in plain language before writing the code.",
+      "why": "Planning input, processing, and output helps you work independently instead of copying a complete solution.",
+      "syntax": [
+        {
+          "code": "finished = finished + 1",
+          "meaning": "reads the old count, adds one, and stores the new count."
+        },
+        {
+          "code": "if done:",
+          "meaning": "tests the boolean currently assigned to done."
+        },
+        {
+          "code": "len(tasks)",
+          "meaning": "returns how many entries are stored in the list."
+        }
+      ],
+      "expected": "2\n3",
+      "prediction": "Which items increase finished? What happens for an empty list?",
+      "mistakes": [
+        "Do not reset the counter inside the loop. That loses the count from earlier items.",
+        "An empty inventory should produce a clear zero-count report, rather than an undefined variable.",
+        "Do not assume a program checks real services just because its data contains service names. This project uses a fixed snapshot."
+      ],
+      "recap": "You can plan, implement, and verify a small report using values, loops, decisions, collections, and functions. Before moving on, rewrite your solution from your plan without looking at the example.",
+      "extras": []
     }
   }
 ];

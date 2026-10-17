@@ -869,3 +869,37 @@
   padding: 0;
   list-style: none;
 }
+
+.programInput {
+  border-bottom: 1px solid var(--lab-border);
+  padding: 0.6rem 1.1rem;
+  color: var(--lab-muted);
+  font-size: 0.68rem;
+}
+
+.programInput textarea {
+  display: block;
+  width: 100%;
+  resize: vertical;
+  margin-block: 0.4rem;
+  border: 1px solid var(--lab-border);
+  border-radius: 0.3rem;
+  padding: 0.4rem;
+  background: var(--lab-code-bg);
+  color: var(--lab-text);
+  font-family: var(--font-mono);
+}
+
+.programInput textarea:focus-visible {
+  outline: 2px solid var(--lab-accent);
+}
+
+/* Keep source, queued input, and output usable when the runner grows. */
+.runner {
+  grid-template-rows: auto minmax(7rem, 1fr) auto minmax(4rem, 0.6fr) auto;
+  overflow-y: auto;
+}
+
+.runnerWithInput {
+  grid-template-rows: auto minmax(7rem, 1fr) auto auto minmax(4rem, 0.6fr) auto;
+}

@@ -1,95 +1,114 @@
 # Python Fundamentals review
 
 Route: `/topics/python-setup`. Branch: `feat/python-fundamentals-chapter-1`.
-Scope of this revision: implement the revised first lesson and propose the beginner
-path. The seven other existing lessons remain available as the earlier edition;
-they have not been rewritten or presented as the revised lessons 2–12.
+Scope: all twelve beginner lessons in Chapter 1. No later chapters were generated.
 
-## Findings and changes
+## Learning experience
 
-The first edition introduced execution order, comments, strings, function calls,
-arguments, multiple print arguments, and syntax errors in one lesson. The next
-lesson jumped to modules and virtual environments. That sequence assumed too much
-for a learner writing their first independent program.
+The earlier material moved from first output directly to modules and environments.
+The rewritten path builds one main idea at a time, using everyday examples before
+applying it to a supplied automation scenario. Each lesson includes:
 
-Lesson 1 now starts with “What is Python?” and one instruction:
-`print("Hello, World!")`. It explains `print`, parentheses, and quoted text in plain
-language without requiring knowledge of functions or arguments. The flow is:
+- What the concept is, why it helps, and explanations of new syntax.
+- A small example, a prediction field, an optional output reveal, and Run/observe guidance.
+- Two independent exercises with optional nested hints and expected-result comparisons.
+- Common mistakes, an explained quiz, a recap, and learning outcomes.
 
-1. What Python is and why instructions are needed.
-2. One example and an explanation of its parts.
-3. A written output prediction, followed by an optional expected-output reveal.
-4. Run and observe in the existing editor.
-5. An independent everyday message, then a small automation message using the same syntax.
-6. Optional nested hints and expected-result comparisons.
-7. Common mistakes with quotes, parentheses, and lowercase `print`.
-8. An explained quiz, recap, outcomes, and completion.
+Practice starts empty except where the task needs supplied data or intentionally
+incorrect code to debug. Exercise solutions are not automatically loaded. Follow-on
+examples for dictionaries, function inputs/results, and specific error handling
+are explained separately before the exercises that need them. They have their own
+Try example buttons and optional output comparisons.
 
-Practice starts with an empty editor. No exercise solution is loaded automatically.
-The automation exercise only displays text; it does not perform infrastructure work.
-Completion stays on the recap rather than advancing into the earlier edition's
-modules/environment lesson.
+| Lesson | Main topic |
+| --- | --- |
+| 01 | What is Python? Your first program |
+| 02 | Understanding `print()` and comments |
+| 03 | Variables and storing information |
+| 04 | Strings, numbers, and booleans |
+| 05 | Basic operators and calculations |
+| 06 | Getting input and displaying output |
+| 07 | Making decisions with `if` |
+| 08 | Repeating instructions with loops |
+| 09 | Lists and dictionaries |
+| 10 | Functions and reusable code |
+| 11 | Errors and debugging |
+| 12 | Your first mini-project |
 
-## Content and progress
+The final project requires planning and implementing a service snapshot report,
+then checking mixed health, empty input, and all-unhealthy input. It uses no APIs,
+cloud access, package installation, or real infrastructure changes.
 
-`app/topics/python-setup/content/chapter-one.ts` retains the existing lesson records.
-`app/topics/python-setup/content/beginner-path.ts` holds first-lesson teaching detail
-and the proposed path separately from presentation. Proposed topics have no
-completion IDs and do not increase the existing progress denominator.
+References/mutability, scope, argument styles, modules, virtual environments,
+files, JSON, APIs, testing, and DevOps automation remain subjects for subsequent
+deeper lessons. Existing modules/environment and JSON material remains accessible
+as optional earlier-edition content; it is not part of the beginner prerequisite path.
 
-All existing lesson IDs, exercise IDs, and quiz-completion keys remain unchanged.
-Already completed lessons are not forced through the new completion requirements.
-The existing progress model is session-only: it did not store progress across page
-reloads, so there is no persisted history to migrate. This revision keeps that
-behavior and explicitly explains it. Exercise reviews remain self-reported,
-not automatic grading. Navigation preserves each lesson's editor workspace during
-the session; loading an exercise or resetting an example replaces that workspace.
+## Maintainability and execution
 
-## Proposed beginner curriculum
+- `content/chapter-one.ts`: typed teaching, examples, exercises, quizzes, and outcomes.
+- `content/beginner-path.ts`: derives the displayed path from the implemented lessons.
+- `content/legacy-lessons.ts`: retains the two optional earlier topics and their IDs.
+- `public/python-runner.mjs`: shared execution behavior for the worker and runtime tests.
+- `public/python.worker.js`: loads Pyodide and forwards execution results.
 
-| Lesson | Topic | Main step |
-| --- | --- | --- |
-| 01 | What is Python? Your first program | Display one message. Implemented in this revision. |
-| 02 | Understanding `print()` and comments | Practise output, then explain an instruction with a comment. |
-| 03 | Variables and storing information | Name a value and use it again. |
-| 04 | Strings, numbers, and booleans | Choose the appropriate kind of value. |
-| 05 | Basic operators and calculations | Calculate and explain a result. |
-| 06 | Getting input and displaying output | Ask for information and respond. |
-| 07 | Making decisions with `if` | Choose what to do based on a condition. |
-| 08 | Repeating instructions with loops | Trace a repeated action. |
-| 09 | Lists and dictionaries | Learn ordered groups first, then named fields. |
-| 10 | Functions and reusable code | Name an action, then explore inputs and results gradually. |
-| 11 | Errors and debugging | Read a message, isolate a mistake, verify a correction. |
-| 12 | Your first mini-project | Plan, write, and check a program independently. |
+The Program input box appears from Lesson 6 onward. Answers are supplied before
+Run, one per line; they are consumed by `input()` in order without terminal echo.
+An empty box supplies no lines; a newline can supply a blank answer. Missing lines
+produce EOFError rather than waiting. Prompts appear in output. Reset example also
+restores its sample input; loading an exercise supplies its sample input when given.
+Input text remains only in page-session state.
 
-Each lesson should follow explain → show → predict → practise → understand → progress.
-Everyday examples come before infrastructure scenarios. References and mutability
-should build on variables and collections; scope, arguments, and return values
-should deepen the function lessons after the first reusable action is understood.
-These are depth milestones, not material to compress into Lesson 1.
+Every run uses fresh Python globals. Variables from a previous run cannot hide
+an undefined-name error or make a partial solution appear complete. This still
+uses one worker/runtime with the existing stop and timeout controls. It is a
+script editor, so learners use print for output rather than relying on notebook
+expression display.
 
-After fundamentals: modules, virtual environments, files, JSON, APIs, testing, and
-DevOps automation, progressing toward Platform Engineering, AWS, Azure, Kubernetes,
-and API development. These stages are proposed, not generated. Lesson 6 will need
-a deliberate browser input flow: the existing worker has no interactive input UI.
+## Progress compatibility
 
-## Validation for this revision
+All eight earlier lesson IDs remain accessible. Six are reused for the same topic
+areas: first output, variables, collections, loops, functions, and the final report.
+The modules/environment and JSON IDs remain on their optional lessons. Existing
+exercise review keys and passed-quiz records are retained. Already completed
+lessons can continue without repeating the rewritten requirements.
 
-- `npm test`: passed (3 tests, including all eight examples and sixteen starters in Pyodide).
+The beginner progress denominator is now twelve lessons, with twenty-four exercise
+reviews. Optional-topic completion badges remain visible but do not count toward
+beginner chapter completion. Newly introduced topics are not automatically credited
+from unrelated older lessons. A smaller percentage after expansion reflects more
+material, not deleted completion records.
+
+Progress remains session-only, matching the existing implementation; there was no
+persisted history to migrate across reloads. Navigating retains per-lesson code and
+queued input. Loading practice or an example replaces the current workspace, with
+an explanation shown before the action. Exercise reviews remain self-reported,
+not automatic grading. Completion advances through the beginner sequence and stops
+at the final project instead of advancing into optional topics.
+
+## Validation
+
+- `npm test`: passed, seven tests covering content completeness, stable topic IDs,
+  all twelve main examples, three follow-on examples, all twenty-four starters,
+  both optional examples, queued input/EOF/conversion, fresh globals, Python errors,
+  recovery after errors, and a reference report for three inventory cases.
 - `npm run lint`: passed.
 - `npx tsc --noEmit`: passed.
-- `npm run build -- --webpack`: passed, including static generation of the lesson route.
-  Webpack was selected because the default Turbopack build stalled in the earlier review.
-- Built HTML smoke check: passed for section order, single editor instruction,
-  prediction field, collapsed hints, and hidden expected output on initial render.
+- `npm run build -- --webpack`: passed, including static route generation.
+  Webpack was selected because the earlier Turbopack build stalled.
 - `git diff --check`: passed.
-- Interactive browser and visual checks remain unverified; no browser was connected
-  during the local testing session. Static rendering checks do not establish click behavior.
+- Local production server: HTTP 200 for the lesson route and shared runner module.
+  HTML smoke checks passed for the greeting source, prediction field, hidden input
+  in Lesson 1, collapsed hints, beginner navigation, and optional-topic labels.
+- Browser interaction, visual layout, narrow screens, and themes remain unverified:
+  the Browser connection reports no available browser. Runtime tests do not prove
+  click behavior or layout.
 - No merge or deployment performed.
 
-Manual review: predict before revealing output, run the greeting, write a new
-message from an empty editor, open hints progressively, compare output, try a
-missing quote and repair it, submit wrong/right quiz answers, complete both practice
-reviews, and mark Lesson 1 complete. Confirm it stays on the recap, navigating away
-and back retains completion and workspace, and earlier lessons remain accessible.
-Check narrow screens and both themes.
+Manual review: navigate all twelve lessons, predict before revealing output, run
+and modify each example, load independent practice, open hints progressively,
+check wrong/right quiz answers, and confirm completion advances to the next lesson.
+From Lesson 6, change Program input and test missing/blank answers. Confirm previous
+code names are unavailable on a fresh run, and Stop/timeout still restart Python.
+Check optional topics, completion badges, the final project, both themes, and narrow
+screens. Page reload resets session progress as before.

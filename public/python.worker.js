@@ -1,5 +1,7 @@
 import { loadPyodide } from "/pyodide/pyodide.mjs";
 
+import { executePython } from "/python-runner.mjs";
+
 const pyodidePromise = loadPyodide({
   indexURL: new URL("/pyodide/", self.location.origin).href,
 });
@@ -22,35 +24,8 @@ self.onmessage = async ({ data }) => {
   const { id, code } = data;
   try {
     const pyodide = await pyodidePromise;
-    let output = "";
-    pyodide.setStdout({ batched: (text) => { output += `${text}\n`; } });
-    pyodide.setStderr({ batched: (text) => { output += `${text}\n`; } });
-
-    try {
-      const result = await pyodide.runPythonAsync(code, {
-        filename: "lesson.py",
-      });
-      if (result !== undefined && result !== null) {
-        output += `${String(result)}\n`;
-        if (typeof result === "object" && "destroy" in result && typeof result.destroy === "function") {
-          result.destroy();
-        }
-      }
-      self.postMessage({
-        type: "result",
-        id,
-        ok: true,
-        output: output.trimEnd(),
-      });
-    } catch (error) {
-      output += error instanceof Error ? error.message : String(error);
-      self.postMessage({
-        type: "result",
-        id,
-        ok: false,
-        output: output.trimEnd(),
-      });
-    }
+    const result = await executePython(pyodide, code, data.stdin ?? "");
+    self.postMessage({ type: "result", id, ...result });
   } catch (error) {
     self.postMessage({
       type: "error",

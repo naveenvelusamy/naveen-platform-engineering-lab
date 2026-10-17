@@ -1,78 +1,121 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { loadPyodide } from "pyodide";
-import { beginnerPath, firstProgram } from "../app/topics/python-setup/content/beginner-path.ts";
 import { lessons } from "../app/topics/python-setup/content/chapter-one.ts";
+import { buildBeginnerPath } from "../app/topics/python-setup/content/beginner-path.ts";
+import { legacyLessons } from "../app/topics/python-setup/content/legacy-lessons.ts";
+import { executePython } from "../public/python-runner.mjs";
 
-const expectedExamples = [
-  "Hello, World!",
-  null, // Interpreter version varies with the installed runtime.
-  "api: 1.5 CPU; enabled=True",
-  "api 3\n3",
-  "api OK\nworker CHECK\nHealthy: 1",
-  "1.5\nInvalid configuration: replicas must be nonnegative",
-  'api True\n{"enabled": true, "replicas": 4, "service": "api"}',
-  "1/2 services healthy",
-];
+const beginnerPath = buildBeginnerPath(lessons);
+const runtime = loadPyodide();
 
-test("Chapter 1 has complete, uniquely identified learning units", () => {
-  assert.equal(lessons.length, 8);
-  assert.equal(new Set(lessons.map((lesson) => lesson.id)).size, lessons.length);
+test("Twelve progressive lessons include teaching, practice, and explained quizzes", () => {
+  assert.equal(lessons.length, 12);
+  const allIds = [...lessons, ...legacyLessons].map((lesson) => lesson.id);
+  assert.equal(new Set(allIds).size, allIds.length);
+  assert.deepEqual(beginnerPath.map((entry) => entry.id), lessons.map((lesson) => lesson.id));
   for (const lesson of lessons) {
-    for (const field of ["title", "explanation", "example", "walkthrough", "useCase"]) {
-      assert.ok(lesson[field].trim(), `${lesson.id}: missing ${field}`);
+    assert.ok(lesson.teaching, lesson.id);
+    for (const field of ["what", "why", "expected", "prediction", "recap"]) {
+      assert.ok(lesson.teaching[field].trim(), `${lesson.id}: missing ${field}`);
     }
+    assert.ok(lesson.teaching.syntax.length && lesson.teaching.mistakes.length);
     assert.ok(lesson.outcomes.length >= 2);
     assert.equal(lesson.exercises.length, 2);
     for (const exercise of lesson.exercises) {
-      assert.ok(exercise.prompt && exercise.starter && exercise.expected);
+      assert.ok(exercise.prompt && exercise.expected);
       assert.ok(exercise.hints.length >= 2);
     }
     assert.ok(lesson.quiz.answer >= 0 && lesson.quiz.answer < lesson.quiz.options.length);
     assert.ok(lesson.quiz.options.every((option) => option.text && option.explanation));
   }
+  assert.equal(lessons[0].example, 'print("Hello, World!")');
+  assert.ok(lessons[0].exercises.every((exercise) => !exercise.starter.trim()));
 });
 
-test("All examples and exercise starters execute in the installed browser Python runtime", async () => {
-  const pyodide = await loadPyodide();
-  for (const [index, lesson] of lessons.entries()) {
-    let output = [];
-    pyodide.setStdout({ batched: (line) => output.push(line) });
-    // Fresh globals ensure a lesson never depends on an earlier lesson's execution.
-    const globals = pyodide.toPy({});
-    try {
-      await pyodide.runPythonAsync(lesson.example, { globals });
-      if (expectedExamples[index] !== null) {
-        assert.equal(output.join("\n"), expectedExamples[index], lesson.id);
-      } else {
-        assert.match(output[0], /^3\./);
-        assert.equal(output[1], "Standard library available");
-      }
-    } finally {
-      globals.destroy();
+test("Existing topic identities remain accessible without crediting unrelated new lessons", () => {
+  for (const id of ["why-python", "python-basics", "collections", "conditions-loops", "functions", "service-summary"]) {
+    assert.ok(lessons.some((lesson) => lesson.id === id));
+  }
+  assert.deepEqual(legacyLessons.map((lesson) => lesson.id), ["python-and-pip", "devops-json"]);
+  assert.ok(!lessons.some((lesson) => lesson.id === "python-and-pip"));
+});
+
+test("Every main and follow-on example runs with the documented output", async () => {
+  const pyodide = await runtime;
+  for (const lesson of lessons) {
+    const result = await executePython(pyodide, lesson.example, lesson.stdin);
+    assert.equal(result.ok, true, `${lesson.id}: ${result.output}`);
+    assert.equal(result.output, lesson.teaching.expected, lesson.id);
+    for (const extra of lesson.teaching.extras ?? []) {
+      const result = await executePython(pyodide, extra.code);
+      assert.equal(result.ok, true, extra.title);
+      assert.equal(result.output, extra.expected, extra.title);
     }
     for (const exercise of lesson.exercises) {
-      output = [];
-      const exerciseGlobals = pyodide.toPy({});
-      try {
-        await pyodide.runPythonAsync(exercise.starter, { globals: exerciseGlobals });
-      } finally {
-        exerciseGlobals.destroy();
-      }
+      const result = await executePython(pyodide, exercise.starter, exercise.stdin);
+      assert.equal(result.ok, true, `${lesson.id} starter: ${result.output}`);
     }
   }
 });
 
+test("Queued input supports multiple lines, text conversion, EOF, and fresh runs", async () => {
+  const pyodide = await runtime;
+  assert.deepEqual(await executePython(pyodide, 'first = input()\nsecond = input()\nprint(first + " " + second)', "Maya\nRavi"), { ok: true, output: "Maya Ravi" });
+  assert.deepEqual(await executePython(pyodide, 'print(int(input()) + 2)', "3"), { ok: true, output: "5" });
+  const eof = await executePython(pyodide, "input()", "");
+  assert.equal(eof.ok, false);
+  assert.match(eof.output, /EOFError/);
+  assert.deepEqual(await executePython(pyodide, 'print(input())', "fresh"), { ok: true, output: "fresh" });
+  assert.deepEqual(await executePython(pyodide, 'print(input())', "\n"), { ok: true, output: "" });
+});
 
-test("The first lesson teaches one instruction and keeps future topics in a proposal", () => {
-  const first = lessons[0];
-  assert.equal(first.id, "why-python", "Keep the existing completion identity");
-  assert.equal(first.example, 'print("Hello, World!")');
-  assert.equal(first.example.split("\n").length, 1);
-  assert.equal(firstProgram.expected, expectedExamples[0]);
-  assert.deepEqual(firstProgram.syntax.map((part) => part.code), ["print", "()", '\"Hello, World!\"']);
-  assert.ok(first.exercises.every((exercise) => !exercise.starter.trim()), "Independent practice starts empty");
-  assert.equal(first.quiz.options[first.quiz.answer].text, firstProgram.expected);
-  assert.equal(beginnerPath.length, 12);
-  assert.ok(beginnerPath.every((entry) => !Object.hasOwn(entry, "id")), "Proposed topics must not become completion IDs");
+test("Debugging starts with fresh names and reports real errors", async () => {
+  const pyodide = await runtime;
+  assert.equal((await executePython(pyodide, 'old_name = "leftover"')).ok, true);
+  const missingName = await executePython(pyodide, "print(old_name)");
+  assert.equal(missingName.ok, false);
+  assert.match(missingName.output, /NameError/);
+  const invalidSyntax = await executePython(pyodide, 'print("Hi"');
+  assert.equal(invalidSyntax.ok, false);
+  assert.match(invalidSyntax.output, /SyntaxError/);
+  const conversion = await executePython(pyodide, 'int("three")');
+  assert.equal(conversion.ok, false);
+  assert.match(conversion.output, /ValueError/);
+  assert.deepEqual(await executePython(pyodide, 'print("Recovered")'), { ok: true, output: "Recovered" });
+});
+
+
+test("Optional earlier material still executes with its existing examples", async () => {
+  const pyodide = await runtime;
+  for (const lesson of legacyLessons) {
+    const result = await executePython(pyodide, lesson.example);
+    assert.equal(result.ok, true, `${lesson.id}: ${result.output}`);
+  }
+});
+
+test("The mini-project requirements work for mixed, empty, and unhealthy snapshots", async () => {
+  const pyodide = await runtime;
+  // Reviewer reference only: this is never loaded into the learner's editor.
+  const report = `def report_services(services):
+    healthy = 0
+    for service in services:
+        print(service["name"])
+        if service["healthy"]:
+            healthy = healthy + 1
+            print("OK")
+        else:
+            print("CHECK")
+    print("Healthy:")
+    print(healthy)
+    print("Total:")
+    print(len(services))
+`;
+  for (const [inventory, expected] of [
+    ['[{"name": "api", "healthy": True}, {"name": "worker", "healthy": False}]', "api\nOK\nworker\nCHECK\nHealthy:\n1\nTotal:\n2"],
+    ["[]", "Healthy:\n0\nTotal:\n0"],
+    ['[{"name": "worker", "healthy": False}]', "worker\nCHECK\nHealthy:\n0\nTotal:\n1"],
+  ]) {
+    assert.deepEqual(await executePython(pyodide, report + `report_services(${inventory})`), { ok: true, output: expected });
+  }
 });
