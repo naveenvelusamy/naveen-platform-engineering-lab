@@ -1,114 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from "react";
 import ThemeToggle from "../../theme-toggle";
 import styles from "./lesson-lab.module.css";
 
-type StepKind = "lesson" | "task" | "quiz";
-type Step = { id: string; kind: StepKind; title: string };
+import { lessons as steps } from "./content/chapter-one";
+
 type WorkerStatus = "loading" | "ready" | "running" | "error";
 type WorkerResponse =
   | { type: "ready"; pythonVersion: string }
   | { type: "result"; id: number; ok: boolean; output: string }
   | { type: "error"; message: string };
-const steps: Step[] = [
-  { id: "why-python", kind: "lesson", title: "Why Python for DevOps" },
-  { id: "python-and-pip", kind: "lesson", title: "Python and packages" },
-  { id: "virtual-environments", kind: "lesson", title: "Virtual environments" },
-  { id: "python-basics", kind: "lesson", title: "Your first Python program" },
-  { id: "collections", kind: "lesson", title: "Lists and dictionaries" },
-  { id: "conditions-loops", kind: "lesson", title: "Conditions and loops" },
-  { id: "functions", kind: "lesson", title: "Functions and errors" },
-  { id: "devops-json", kind: "lesson", title: "Working with JSON" },
-  { id: "setup-project", kind: "task", title: "Task: summarize services" },
-  { id: "installing-library", kind: "quiz", title: "Quiz: isolate dependencies" },
-];
-
-const starterCode: Record<string, string> = {
-  "why-python": `# Python helps automate repeatable platform tasks.
-print("Hello, platform engineering!")
-print("Let's write a small program.")`,
-  "python-and-pip": `# This is real Python running in your browser.
-import sys
-
-print("Python version:", sys.version.split()[0])
-print("The standard library is ready to use.")`,
-  "virtual-environments": `# A regular Python project can use a venv to isolate packages.
-# This browser runner uses WebAssembly, not a shell or a project venv.
-project = "service-health-check"
-dependencies = ["requests", "pyyaml"]
-
-print("Project:", project)
-print("Dependencies to isolate:", ", ".join(dependencies))`,
-  "python-basics": `# Store values in variables and print a useful message.
-engineer = "Naveen"
-years_in_platform = 13
-
-print(f"{engineer} has {years_in_platform}+ years in infrastructure.")`,
-  collections: `# Lists keep an ordered group of values.
-services = ["api", "worker", "database"]
-
-# Dictionaries describe a value with named fields.
-deployment = {"environment": "production", "replicas": 3}
-
-print("Services:", services)
-print("Environment:", deployment["environment"])
-print("Replica count:", deployment["replicas"])`,
-  "conditions-loops": `services = [
-    {"name": "api", "healthy": True},
-    {"name": "worker", "healthy": False},
-    {"name": "database", "healthy": True},
-]
-
-for service in services:
-    status = "healthy" if service["healthy"] else "needs attention"
-    print(f'{service["name"]}: {status}')`,
-  functions: `def check_service(name, is_healthy):
-    """Return a short status message for a service."""
-    if not name:
-        raise ValueError("Service name cannot be empty")
-    status = "healthy" if is_healthy else "needs attention"
-    return f"{name}: {status}"
-
-for name, health in [("api", True), ("worker", False)]:
-    print(check_service(name, health))`,
-  "devops-json": `import json
-
-config_text = '{"service": "checkout", "replicas": 3, "enabled": true}'
-config = json.loads(config_text)
-
-print("Service:", config["service"])
-print("Replicas:", config["replicas"])
-print("Enabled:", config["enabled"])`,
-  "setup-project": `services = [
-    {"name": "api", "healthy": True},
-    {"name": "worker", "healthy": False},
-    {"name": "database", "healthy": True},
-]
-
-healthy_count = 0
-for service in services:
-    if service["healthy"]:
-        healthy_count += 1
-        result = "OK"
-    else:
-        result = "CHECK"
-    print(f'{service["name"]}: {result}')
-
-print(f"{healthy_count}/{len(services)} services healthy")`,
-  "installing-library": `# For a regular Python project, install dependencies in a venv.
-project_dependencies = ["requests", "pyyaml"]
-
-for package in project_dependencies:
-    print("Would install in the project environment:", package)`,
-};
-
-const quizOptions = [
-  "Install every project package into system Python",
-  "Use a project virtual environment and record dependencies",
-  "Copy package source files into each project manually",
-];
+const starterCode = Object.fromEntries(steps.map((lesson) => [lesson.id, lesson.example]));
 
 export default function LessonLab() {
   const [activeStepId, setActiveStepId] = useState(steps[0].id);
@@ -119,26 +23,17 @@ export default function LessonLab() {
   const [output, setOutput] = useState("Your program output will appear here.");
   const [runnerStatus, setRunnerStatus] = useState<WorkerStatus>("loading");
   const [pythonVersion, setPythonVersion] = useState("");
-  const [lastRunSucceeded, setLastRunSucceeded] = useState(false);
+  const [quizPassed, setQuizPassed] = useState<Set<string>>(() => new Set());
+  const [attemptedExercises, setAttemptedExercises] = useState<Set<string>>(() => new Set());
+  const [editorTask, setEditorTask] = useState("Example");
   const workerRef = useRef<Worker | null>(null);
   const requestIdRef = useRef(0);
-  const runStepIdRef = useRef("");
-  const activeStepIdRef = useRef(activeStepId);
   const timeoutRef = useRef<number | null>(null);
   const editorRef = useRef<HTMLTextAreaElement>(null);
 
   const activeStep = steps.find((step) => step.id === activeStepId) ?? steps[0];
   const activeCode = codeByStep[activeStep.id] ?? "";
   const progress = Math.round((completed.size / steps.length) * 100);
-  const counts = useMemo(
-    () => ({
-      done: completed.size,
-      quizzes: `${Number(completed.has("installing-library"))}/1`,
-      tasks: `${Number(completed.has("setup-project"))}/1`,
-    }),
-    [completed],
-  );
-
   const createWorker = useCallback(() => {
     workerRef.current?.terminate();
     const worker = new Worker("/python.worker.js", {
@@ -157,11 +52,6 @@ export default function LessonLab() {
         timeoutRef.current = null;
         if (data.id !== requestIdRef.current) return;
         setOutput(data.output || "(Program finished without producing output.)");
-        setLastRunSucceeded(
-          data.ok &&
-            runStepIdRef.current === "setup-project" &&
-            activeStepIdRef.current === "setup-project",
-        );
         setRunnerStatus("ready");
       } else {
         setOutput(data.message);
@@ -190,20 +80,19 @@ export default function LessonLab() {
   function completeAndContinue() {
     setCompleted((previous) => new Set(previous).add(activeStep.id));
     const nextStep = steps[steps.findIndex((step) => step.id === activeStep.id) + 1];
-    if (nextStep) setActiveStepId(nextStep.id);
+    if (nextStep) selectStep(nextStep.id);
   }
 
   function selectStep(stepId: string) {
-    activeStepIdRef.current = stepId;
     setActiveStepId(stepId);
     setOutput("Run the example or edit it to try your own Python.");
-    setLastRunSucceeded(false);
     setQuizMessage("");
+    setQuizChoice(null);
+    setEditorTask("Saved workspace");
   }
 
   function editCode(value: string) {
     setCodeByStep((previous) => ({ ...previous, [activeStep.id]: value }));
-    setLastRunSucceeded(false);
   }
 
   function handleEditorKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
@@ -223,9 +112,7 @@ export default function LessonLab() {
   function runCode() {
     if (runnerStatus !== "ready" || !workerRef.current || !activeCode.trim()) return;
     const id = ++requestIdRef.current;
-    runStepIdRef.current = activeStep.id;
     setRunnerStatus("running");
-    setLastRunSucceeded(false);
     setOutput("Running your Python program…");
     workerRef.current.postMessage({ type: "run", id, code: activeCode });
     timeoutRef.current = window.setTimeout(() => {
@@ -250,12 +137,17 @@ export default function LessonLab() {
   }
 
   function submitQuiz() {
-    if (quizChoice === 1) {
-      setQuizMessage("Correct. A project venv keeps dependencies isolated and makes setup repeatable.");
-      setCompleted((previous) => new Set(previous).add("installing-library"));
-    } else {
-      setQuizMessage("Not quite. Use a project virtual environment so dependencies stay isolated.");
-    }
+    if (quizChoice === null) return;
+    const correct = quizChoice === activeStep.quiz.answer;
+    setQuizMessage(`${correct ? "Correct. " : "Try again. "}${activeStep.quiz.options[quizChoice].explanation}`);
+    if (correct) setQuizPassed((previous) => new Set(previous).add(activeStep.id));
+  }
+
+  function loadExercise(index: number) {
+    editCode(activeStep.exercises[index].starter);
+    setEditorTask(activeStep.exercises[index].title);
+    setOutput("Exercise loaded. Predict the result, write your code, then run and compare with the expected result.");
+    editorRef.current?.focus();
   }
 
   return (
@@ -268,7 +160,7 @@ export default function LessonLab() {
         </Link>
         <div className={styles.courseTitle}>
           <span>PYTHON FOR DEVOPS</span>
-          <h2>01 — Python foundations</h2>
+          <h2>01 — Python Fundamentals</h2>
         </div>
         <div className={styles.progressBlock}>
           <div className={styles.progressHeading}><span>Lab progress</span><strong>{progress}%</strong></div>
@@ -276,21 +168,20 @@ export default function LessonLab() {
             <span style={{ width: `${progress}%` }} />
           </div>
           <div className={styles.stats}>
-            <div><strong>{counts.done}</strong><span>Done</span></div>
-            <div><strong>{counts.quizzes}</strong><span>Quizzes</span></div>
-            <div><strong>{counts.tasks}</strong><span>Tasks</span></div>
+            <div><strong>{completed.size}</strong><span>Done</span></div>
+            <div><strong>{quizPassed.size}/{steps.length}</strong><span>Quizzes</span></div>
+            <div><strong>{attemptedExercises.size}/{steps.length * 2}</strong><span>Practiced</span></div>
           </div>
         </div>
         <nav className={styles.stepNav} aria-label="Lab steps">
           <p className={styles.navLabel}>YOUR LEARNING PATH</p>
           {steps.map((step, index) => {
-            const isLocked = step.kind === "quiz" && !completed.has("setup-project");
             return (
               <button
                 className={`${styles.stepButton} ${activeStep.id === step.id ? styles.stepActive : ""}`}
                 type="button"
                 key={step.id}
-                disabled={isLocked}
+                disabled={runnerStatus === "running"}
                 onClick={() => selectStep(step.id)}
                 aria-current={activeStep.id === step.id ? "step" : undefined}
               >
@@ -301,7 +192,6 @@ export default function LessonLab() {
                   <small>{step.kind}</small>
                   <span>{step.title}</span>
                 </span>
-                {isLocked ? <span className={styles.lockIcon} aria-label="Complete the task to unlock">⌑</span> : null}
               </button>
             );
           })}
@@ -322,136 +212,62 @@ export default function LessonLab() {
           <div className={styles.headerBadge}><span /> {runnerStatus === "ready" ? `Python ${pythonVersion} ready` : runnerStatus === "running" ? "Program running" : runnerStatus === "error" ? "Runtime error" : "Loading Python runtime"}</div>
         </header>
         <article className={styles.lessonContent} key={activeStep.id}>
-          {activeStep.id === "why-python" ? (
-            <>
-              <p className={styles.lead}>Bash is great for connecting commands. When work needs structured data, API calls, retries, or logic that should stay readable, Python is a useful next tool.</p>
-              <h2>Where Python helps in platform work</h2>
-              <p>Python is widely available and has libraries for common infrastructure tasks.</p>
-              <ul>
-                <li>Read JSON, YAML, and CSV configuration.</li>
-                <li>Call REST APIs to check services or trigger deployment workflows.</li>
-                <li>Parse logs, summarize events, and automate repetitive checks.</li>
-                <li>Use cloud provider SDKs such as AWS boto3 to manage resources.</li>
-              </ul>
-              <div className={styles.callout}><strong>Use the right tool for the job</strong><p>Keep a one-line shell pipeline in Bash. Use Python when the script needs data structures, clear error handling, or maintainable branching logic.</p></div>
-              <p>Edit the starter program below and run it. Python runs locally in your browser using WebAssembly; your code is not sent to an execution server.</p>
-            </>
-          ) : null}
-          {activeStep.id === "python-and-pip" ? (
-            <>
-              <p className={styles.lead}>Python comes with a standard library for many everyday tasks. Third-party packages add capabilities, but should be managed per project.</p>
-              <h2>Standard library versus packages</h2>
-              <p>Modules such as <code>json</code>, <code>pathlib</code>, and <code>csv</code> ship with Python. On a normal machine, <code>pip</code> installs additional packages. This browser lesson includes the Python standard library but does not provide a shell or package installation.</p>
-              <pre><code>{`import sys\nprint("Python:", sys.version.split()[0])`}</code></pre>
-              <div className={styles.callout}><strong>Try it in the editor</strong><p>Change the code, click Run, and inspect the output below. Import standard-library modules such as <code>json</code> and <code>statistics</code>.</p></div>
-            </>
-          ) : null}
-          {activeStep.id === "virtual-environments" ? (
-            <>
-              <p className={styles.lead}>A virtual environment gives each regular Python project its own package directory, separate from system Python and other projects.</p>
-              <h2>Why isolate dependencies?</h2>
-              <ul>
-                <li>Projects can depend on different versions of the same library.</li>
-                <li>Installing packages does not modify system-managed Python.</li>
-                <li>A fresh environment makes setup easier to repeat and troubleshoot.</li>
-              </ul>
-              <h2>The usual project workflow</h2>
-              <pre><code>{`python3 -m venv .venv\nsource .venv/bin/activate\npython -m pip install requests`}</code></pre>
-              <p>This browser runner is a WebAssembly Python runtime, not a Linux shell. The commands above are for your own local project; they do not run in this page.</p>
-              <div className={styles.callout}><strong>Keep it reproducible</strong><p>Record dependencies in a project file such as <code>requirements.txt</code>, and leave the generated <code>.venv</code> directory out of version control.</p></div>
-            </>
-          ) : null}
-          {activeStep.id === "python-basics" ? (
-            <>
-              <p className={styles.lead}>A Python program is a sequence of readable instructions. Start with values, variables, and output.</p>
-              <h2>Variables and formatted strings</h2>
-              <p>Assign a value with <code>=</code>. Use <code>print()</code> to display it. An f-string inserts values inside braces.</p>
-              <pre><code>{`engineer = "Naveen"\nyears_in_platform = 13\nprint(f"{engineer} has {years_in_platform}+ years of experience")`}</code></pre>
-              <div className={styles.callout}><strong>Try changing the values</strong><p>Edit the name or years in the code editor, run it again, and compare the output.</p></div>
-            </>
-          ) : null}
-          {activeStep.id === "collections" ? (
-            <>
-              <p className={styles.lead}>Automation often starts with a collection of resources and a little structured configuration.</p>
-              <h2>Lists and dictionaries</h2>
-              <p>A list stores an ordered sequence. A dictionary maps named keys to values. Combine them to represent a set of services or infrastructure settings.</p>
-              <pre><code>{`services = ["api", "worker", "database"]\nconfig = {"environment": "production", "replicas": 3}\nprint(services[0])\nprint(config["replicas"])`}</code></pre>
-              <p>Try adding a service to the list or changing the replica count.</p>
-            </>
-          ) : null}
-          {activeStep.id === "conditions-loops" ? (
-            <>
-              <p className={styles.lead}>Conditions choose what to do; loops repeat an action for each item. Together, they can summarize a fleet of service checks.</p>
-              <h2>Check each service</h2>
-              <p>The starter code loops over service dictionaries and prints a different status depending on each health check.</p>
-              <pre><code>{`for service in services:\n    if service["healthy"]:\n        print(service["name"], "OK")\n    else:\n        print(service["name"], "CHECK")`}</code></pre>
-              <div className={styles.callout}><strong>Indentation matters</strong><p>Python uses indentation to mark the body of a loop or condition. Keep statements in the same block aligned.</p></div>
-            </>
-          ) : null}
-          {activeStep.id === "functions" ? (
-            <>
-              <p className={styles.lead}>Functions name a useful piece of logic so it can be reused and tested. Exceptions help report invalid input instead of quietly producing a wrong result.</p>
-              <h2>Define, call, and validate</h2>
-              <p>The example defines a service-check function, rejects a missing name, and calls the function for two services.</p>
-              <pre><code>{`def check_service(name, is_healthy):\n    if not name:\n        raise ValueError("Service name cannot be empty")\n    return f"{name}: {'healthy' if is_healthy else 'needs attention'}"`}</code></pre>
-              <p>Try passing an empty name and observe the Python traceback in the output panel.</p>
-            </>
-          ) : null}
-          {activeStep.id === "devops-json" ? (
-            <>
-              <p className={styles.lead}>JSON is a common format for API responses, deployment settings, and service configuration. Python’s standard library can parse it without installing a package.</p>
-              <h2>Parse configuration</h2>
-              <p><code>json.loads()</code> turns a JSON string into Python dictionaries, lists, and scalar values.</p>
-              <pre><code>{`import json\nconfig = json.loads('{"service": "checkout", "replicas": 3}')\nprint(config["service"])\nprint(config["replicas"])`}</code></pre>
-              <div className={styles.callout}><strong>Practical extension</strong><p>Try adding a field to the JSON string, then access it from the parsed dictionary.</p></div>
-            </>
-          ) : null}
-          {activeStep.id === "setup-project" ? (
-            <>
-              <p className={styles.lead}>Write a small status summary for several services. The starter program counts healthy services and flags the ones that need attention.</p>
-              <h2>Your task</h2>
-              <ul>
-                <li>Add another service to the <code>services</code> list.</li>
-                <li>Change a service health value and run the program.</li>
-                <li>Make sure the printed total matches the healthy services.</li>
-              </ul>
-              <div className={styles.callout}><strong>Completion</strong><p>Run your program successfully, then mark the task complete to unlock the final quiz.</p></div>
-              <button className={styles.primaryButton} type="button" disabled={!lastRunSucceeded} onClick={completeAndContinue}>
-                {completed.has("setup-project") ? "Task complete ✓" : "Mark task complete and unlock quiz →"}
-              </button>
-              {!lastRunSucceeded ? <span className={styles.buttonHint}>Run the Python program successfully first.</span> : null}
-            </>
-          ) : null}
-          {activeStep.id === "installing-library" ? (
-            <>
-              <p className={styles.lead}>A new automation project needs a third-party HTTP library. What is the best way to keep its dependencies safe and reproducible?</p>
-              <fieldset className={styles.quizOptions}>
-                <legend>Choose one answer</legend>
-                {quizOptions.map((option, index) => (
-                  <label className={`${styles.quizOption} ${quizChoice === index ? styles.quizSelected : ""}`} key={option}>
-                    <input type="radio" name="python-quiz" value={index} checked={quizChoice === index} onChange={() => { setQuizChoice(index); setQuizMessage(""); }} />
-                    <span className={styles.radioMark} />
-                    <span>{option}</span>
-                  </label>
-                ))}
-              </fieldset>
-              <button className={styles.primaryButton} type="button" disabled={quizChoice === null} onClick={submitQuiz}>Check answer</button>
-              {quizMessage ? <p className={`${styles.quizFeedback} ${completed.has("installing-library") ? styles.feedbackCorrect : ""}`} role="status">{quizMessage}</p> : null}
-              {completed.has("installing-library") ? <p className={styles.finishNote}>Foundations complete. You can revisit any lesson from the sidebar.</p> : null}
-            </>
-          ) : null}
-          {activeStep.kind === "lesson" ? (
-            <button className={styles.primaryButton} type="button" onClick={completeAndContinue}>
-              {completed.has(activeStep.id) ? "Continue →" : "Mark lesson complete →"}
-            </button>
-          ) : null}
+          <p className={styles.lead}>{activeStep.explanation}</p>
+          <h2>Learning outcomes</h2>
+          <ul>{activeStep.outcomes.map((outcome) => <li key={outcome}>{outcome}</li>)}</ul>
+          <h2>Syntax in action</h2>
+          <pre><code>{activeStep.example}</code></pre>
+          <p>{activeStep.walkthrough}</p>
+          <div className={styles.callout}><strong>DevOps use case</strong><p>{activeStep.useCase}</p></div>
+          <h2>Practice independently</h2>
+          <p>Use “Load exercise” to replace the current editor text with a starter. Copy any work you want to keep first. Hints open one at a time. Compare your output yourself; practice checkboxes record your own review, not automatic grading. Progress lasts for this page session.</p>
+          {activeStep.exercises.map((exercise, index) => {
+            const exerciseId = `${activeStep.id}-${index}`;
+            return (
+              <section key={exerciseId} className={styles.callout} aria-label={exercise.title}>
+                <h3>{exercise.title}</h3>
+                <p>{exercise.prompt}</p>
+                <button type="button" className={styles.primaryButton} disabled={runnerStatus === "running"} onClick={() => loadExercise(index)}>Load exercise in editor</button>
+                <details><summary>Hint 1: getting started</summary><p>{exercise.hints[0]}</p>
+                  <details><summary>Hint 2: next step</summary><p>{exercise.hints[1]}</p>
+                    {exercise.hints[2] ? <details><summary>Hint 3: bring it together</summary><p>{exercise.hints[2]}</p></details> : null}
+                  </details>
+                </details>
+                <details><summary>Expected result (compare after trying)</summary><pre>{exercise.expected}</pre></details>
+                <label><input type="checkbox" checked={attemptedExercises.has(exerciseId)} onChange={(event) => {
+                  setAttemptedExercises((previous) => {
+                    const next = new Set(previous);
+                    if (event.target.checked) next.add(exerciseId); else next.delete(exerciseId);
+                    return next;
+                  });
+                }} /> I ran my code and compared the result.</label>
+              </section>
+            );
+          })}
+          <h2>Knowledge check</h2>
+          <fieldset className={styles.quizOptions}>
+            <legend>{activeStep.quiz.question}</legend>
+            {activeStep.quiz.options.map((option, index) => (
+              <label className={`${styles.quizOption} ${quizChoice === index ? styles.quizSelected : ""}`} key={option.text}>
+                <input type="radio" name={`quiz-${activeStep.id}`} checked={quizChoice === index} onChange={() => { setQuizChoice(index); setQuizMessage(""); }} />
+                <span className={styles.radioMark} /><span>{option.text}</span>
+              </label>
+            ))}
+          </fieldset>
+          <button className={styles.primaryButton} type="button" disabled={quizChoice === null} onClick={submitQuiz}>Check answer</button>
+          {quizMessage ? <p className={styles.quizFeedback} role="status">{quizMessage}</p> : null}
+          <p>Complete both practice reviews and pass this lesson’s quiz to mark it complete.</p>
+          <button className={styles.primaryButton} type="button" disabled={runnerStatus === "running" || !quizPassed.has(activeStep.id) || !activeStep.exercises.every((_, index) => attemptedExercises.has(`${activeStep.id}-${index}`))} onClick={completeAndContinue}>
+            {completed.has(activeStep.id) ? "Lesson complete — continue →" : "Mark lesson complete →"}
+          </button>
+          {completed.size === steps.length ? <p className={styles.finishNote}>Chapter 1 complete. Revisit any lesson to practice again.</p> : null}
         </article>
 
         <section className={styles.runner} aria-label="Python code editor and output">
           <div className={styles.runnerHeader}>
-            <div className={styles.runnerTitle}><span className={styles.terminalDot} /> Python editor <span className={styles.runtimeTag}>{runnerStatus === "ready" ? `PYTHON ${pythonVersion}` : runnerStatus.toUpperCase()}</span></div>
+            <div className={styles.runnerTitle}><span className={styles.terminalDot} /> Python editor · {editorTask} <span className={styles.runtimeTag}>{runnerStatus === "ready" ? `PYTHON ${pythonVersion}` : runnerStatus.toUpperCase()}</span></div>
             <div className={styles.runnerActions}>
-              <button className={styles.clearButton} type="button" onClick={() => editCode(starterCode[activeStep.id])} disabled={runnerStatus === "running"}>Reset example</button>
+              <button className={styles.clearButton} type="button" onClick={() => { editCode(starterCode[activeStep.id]); setEditorTask("Example"); }} disabled={runnerStatus === "running"}>Reset example</button>
               {runnerStatus === "running" ? (
                 <button className={styles.stopButton} type="button" onClick={stopCode}>Stop</button>
               ) : runnerStatus === "error" ? (
