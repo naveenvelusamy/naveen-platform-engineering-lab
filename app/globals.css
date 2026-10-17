@@ -1,28 +1,28 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f0eef4;
-  --foreground: #373544;
-  --site-surface: rgba(248, 246, 250, 0.96);
-  --site-surface-raised: #f2eff6;
-  --site-surface-muted: #e8e4ee;
-  --site-border: #d4cfdf;
-  --site-ink: #373544;
-  --site-muted: #686477;
-  --site-accent: #715b91;
-  --site-accent-cool: #64758f;
-  --project-surface: #ebe8f1;
-  --project-surface-end: #e1e5ee;
-  --project-ink: #3b3b50;
-  --project-muted: #626578;
-  --project-grid: rgba(90, 77, 127, 0.08);
-  --project-line: #8585a2;
-  --project-pulse: #806ba5;
-  --project-node: rgba(248, 246, 250, 0.96);
-  --project-node-border: #9692ac;
-  --project-node-ink: #4d4968;
-  --project-detail: #6e6a7d;
-  --project-dot: #806ba5;
+  --background: #f2f6ff;
+  --foreground: #172843;
+  --site-surface: rgba(255, 255, 255, 0.94);
+  --site-surface-raised: #edf3ff;
+  --site-surface-muted: #e8f5f4;
+  --site-border: #cdd9eb;
+  --site-ink: #172d4d;
+  --site-muted: #536984;
+  --site-accent: #087e8b;
+  --site-accent-cool: #5268d8;
+  --project-surface: #e8f0ff;
+  --project-surface-end: #e2f5f3;
+  --project-ink: #263b5c;
+  --project-muted: #5c708d;
+  --project-grid: rgba(65, 101, 183, 0.1);
+  --project-line: #617bc1;
+  --project-pulse: #078b91;
+  --project-node: rgba(255, 255, 255, 0.96);
+  --project-node-border: #8ca4ca;
+  --project-node-ink: #344c72;
+  --project-detail: #62768f;
+  --project-dot: #d58b32;
 }
 
 :root[data-theme="dark"] {
@@ -398,11 +398,11 @@ html {
 }
 
 :root[data-theme="light"] .profile-photo-frame {
-  box-shadow: 0 0 0 5px rgba(113, 91, 145, 0.1);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--site-accent-cool) 14%, transparent);
 }
 
 :root[data-theme="light"] .site-nav-link-active {
-  background: #e8e3ef;
+  background: color-mix(in srgb, var(--site-accent-cool) 13%, white);
 }
 
 :root[data-theme="dark"] .site-content > section[id="experience"] {
@@ -905,11 +905,11 @@ html {
 }
 
 :root[data-theme="light"] .site-geometry {
-  opacity: 0.31;
+  opacity: 0.46;
   background:
-    radial-gradient(ellipse at 78% 20%, rgba(100, 117, 143, 0.065), transparent 32rem),
-    linear-gradient(rgba(90, 77, 127, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(90, 77, 127, 0.035) 1px, transparent 1px);
+    radial-gradient(ellipse at 78% 20%, rgba(82, 104, 216, 0.12), transparent 32rem),
+    linear-gradient(rgba(8, 126, 139, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(82, 104, 216, 0.055) 1px, transparent 1px);
 }
 
 :root[data-theme="light"] [class~="text-[#10243d]"] {
